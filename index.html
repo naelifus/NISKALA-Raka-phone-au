@@ -1070,18 +1070,41 @@
         </div>
       `,
 
+   
       Instagram: `
-        <div class="app-card">
-          <h3>Instagram</h3>
-          <p>raka.jpg · Suggested for you</p>
-          <div style="height:220px;margin-top:12px;border-radius:12px;background:linear-gradient(150deg,#66789a,#c18d9e,#252c41)"></div>
-          <p style="margin-top:12px;color:#333">♡  Like &nbsp; ◯ Comment &nbsp; ↗ Share</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0 16px">
+          <h3 style="font-size:22px">Instagram</h3>
+          <button onclick="openInstagramDM()" style="font-size:22px;background:none;color:#222" aria-label="Messages">✉</button>
         </div>
+
+        <div style="display:flex;align-items:center;gap:15px;padding:8px 0 18px">
+          <div style="width:68px;height:68px;flex-shrink:0;border-radius:50%;padding:3px;background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf)">
+            <div style="width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#283b58,#bd9eac);border:3px solid white;display:grid;place-items:center;color:white;font-size:25px">R</div>
+          </div>
+          <div style="flex:1;display:flex;justify-content:space-around;text-align:center;font-size:12px">
+            <div><strong style="display:block;font-size:17px" id="igPostCount">3</strong>posts</div>
+            <div><strong style="display:block;font-size:17px">1.2K</strong>followers</div>
+            <div><strong style="display:block;font-size:17px">386</strong>following</div>
+          </div>
+        </div>
+
+        <strong style="font-size:14px">raka.jpg</strong>
+        <p style="font-size:12px;margin:5px 0 12px;color:#555">somewhere between lost & found.</p>
+
+        <div style="display:flex;gap:7px;margin-bottom:19px">
+          <button onclick="showToast('Profile editing coming soon')" style="flex:1;padding:9px;border-radius:8px;background:#e9e9ef;color:#222;font-size:12px;font-weight:600">Edit profile</button>
+          <button onclick="openInstagramDM()" style="flex:1;padding:9px;border-radius:8px;background:#e9e9ef;color:#222;font-size:12px;font-weight:600">Messages</button>
+        </div>
+
+        <div id="igFeed"></div>
+
         <div class="app-card">
-          <h3>Messages</h3>
-          <p>Instagram conversations can be added here.</p>
+          <h3>Send a post</h3>
+          <textarea id="igNewCaption" placeholder="Write a caption..." style="width:100%;height:75px;resize:vertical;border:1px solid #ddd;border-radius:9px;padding:10px;margin-top:9px;font:inherit;font-size:13px;color:#222"></textarea>
+          <button onclick="publishInstagramPost()" style="width:100%;margin-top:9px;padding:11px;border-radius:10px;background:#087df5;color:white;font-weight:600">Share post</button>
         </div>
       `,
+
 
       Files: `
         <div class="app-card"><h3>Recents</h3><p>No recent files.</p></div>
@@ -1195,7 +1218,10 @@
           </div>
         `;
       showScreen("appScreen");
-
+      
+if (name === "Instagram") {
+  renderInstagramFeed();
+}
       if (name === "Notes") {
         const note = $("noteText");
         note.value = localStorage.getItem("raka-note") || "";
@@ -1279,6 +1305,207 @@
       container.appendChild(bubble);
       container.scrollTop = container.scrollHeight;
     }
+
+const igDefaultPosts = [
+  {
+    id: "ig1",
+    user: "raka.jpg",
+    location: "Malang, Indonesia",
+    caption: "quiet days, loud thoughts.",
+    likes: 128,
+    liked: false,
+    comments: [],
+    color: "linear-gradient(145deg,#64748b,#a8a0b9,#30394b)"
+  },
+  {
+    id: "ig2",
+    user: "raka.jpg",
+    location: "somewhere",
+    caption: "not everything needs an explanation.",
+    likes: 94,
+    liked: false,
+    comments: [],
+    color: "linear-gradient(145deg,#d8b5a3,#94677c,#38344e)"
+  },
+  {
+    id: "raka_private",
+    user: "raka.jpg",
+    location: "",
+    caption: "there's something i haven't told anyone.",
+    likes: 57,
+    liked: false,
+    comments: [],
+    color: "linear-gradient(145deg,#263d4b,#151a2c,#5e526b)"
+  }
+];
+
+let igPosts = JSON.parse(localStorage.getItem("raka-ig-posts") || "null") || igDefaultPosts;
+
+function saveInstagram() {
+  localStorage.setItem("raka-ig-posts", JSON.stringify(igPosts));
+}
+
+function renderInstagramFeed() {
+  const feed = $("igFeed");
+  if (!feed) return;
+
+  $("igPostCount").textContent = igPosts.length;
+  feed.innerHTML = igPosts.map(post => `
+    <article style="margin-bottom:22px;border-bottom:1px solid #e5e5ec;padding-bottom:15px">
+      <div style="display:flex;align-items:center;gap:9px;padding:0 0 10px">
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6079a8,#bc8aa6);display:grid;place-items:center;color:white">R</div>
+        <div style="flex:1;min-width:0">
+          <strong style="font-size:12px">${escapeIG(post.user)}</strong>
+          <p style="font-size:10px;color:#777;margin-top:2px">${escapeIG(post.location || "Instagram")}</p>
+        </div>
+        <span style="font-size:18px">•••</span>
+      </div>
+
+      <div style="aspect-ratio:1/1;border-radius:5px;background:${post.color};display:grid;place-items:center;color:#ffffffb0;font-size:12px;letter-spacing:3px">
+        R A K A
+      </div>
+
+      <div style="display:flex;align-items:center;gap:15px;padding:10px 0 7px">
+        <button onclick="toggleInstagramLike('${post.id}')" style="background:none;color:${post.liked ? "#ed4956" : "#222"};font-size:24px" aria-label="Like post">${post.liked ? "♥" : "♡"}</button>
+        <button onclick="focusInstagramComment('${post.id}')" style="background:none;color:#222;font-size:23px" aria-label="Comment">◯</button>
+        <button onclick="showToast('Post ready to share')" style="background:none;color:#222;font-size:22px" aria-label="Share">↗</button>
+      </div>
+
+      <strong style="font-size:12px">${post.likes} likes</strong>
+      <p style="font-size:12px;line-height:1.5;margin-top:6px;color:#25252b"><strong>${escapeIG(post.user)}</strong> ${escapeIG(post.caption)}</p>
+
+      <div style="margin-top:7px">
+        ${post.comments.map(comment => `
+          <p style="font-size:12px;line-height:1.5;margin-top:4px;overflow-wrap:anywhere">
+            <strong>${escapeIG(comment.user)}</strong> ${escapeIG(comment.text)}
+          </p>
+        `).join("")}
+      </div>
+
+      <form onsubmit="addInstagramComment(event,'${post.id}')" style="display:flex;gap:6px;margin-top:9px">
+        <input id="ig-comment-${post.id}" placeholder="Add a comment..." maxlength="300" style="min-width:0;flex:1;border:0;border-bottom:1px solid #ddd;padding:8px 2px;font-size:12px;outline:none;color:#222;background:transparent">
+        <button style="background:none;color:#087df5;font-size:12px;font-weight:600">Post</button>
+      </form>
+    </article>
+  `).join("");
+}
+
+function escapeIG(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function toggleInstagramLike(id) {
+  const post = igPosts.find(item => item.id === id);
+  if (!post) return;
+
+  post.liked = !post.liked;
+  post.likes = Math.max(0, post.likes + (post.liked ? 1 : -1));
+  saveInstagram();
+  renderInstagramFeed();
+}
+
+function addInstagramComment(event, id) {
+  event.preventDefault();
+
+  const input = $("ig-comment-" + id);
+  const value = input.value.trim();
+  if (!value) return;
+
+  const post = igPosts.find(item => item.id === id);
+  if (!post) return;
+
+  post.comments.push({ user: "raka.jpg", text: value });
+  saveInstagram();
+  renderInstagramFeed();
+}
+
+function focusInstagramComment(id) {
+  const input = $("ig-comment-" + id);
+  if (input) input.focus();
+}
+
+function publishInstagramPost() {
+  const input = $("igNewCaption");
+  const caption = input.value.trim();
+  if (!caption) {
+    showToast("Write a caption first");
+    return;
+  }
+
+  igPosts.unshift({
+    id: "ig" + Date.now(),
+    user: "raka.jpg",
+    location: "Malang, Indonesia",
+    caption,
+    likes: 0,
+    liked: false,
+    comments: [],
+    color: "linear-gradient(145deg,#64748b,#a8a0b9,#30394b)"
+  });
+
+  saveInstagram();
+  renderInstagramFeed();
+  input.value = "";
+  showToast("Post shared");
+}
+
+function openInstagramDM() {
+  const contact = "Instagram DM";
+  const messages = chats[contact] || [];
+
+  $("appTitle").textContent = "Instagram DM";
+  $("appContent").innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:1px solid #ddd">
+      <div class="avatar">R</div>
+      <div><strong>Instagram</strong><p style="font-size:11px;color:#777;margin-top:3px">Your AU conversations</p></div>
+    </div>
+    <div id="igDMList" style="display:flex;flex-direction:column;gap:9px;padding:14px 0 75px;min-height:260px"></div>
+    <form id="igDMForm" style="position:absolute;bottom:12px;left:12px;right:12px;display:flex;gap:7px;background:#f5f5fa;padding:7px 0">
+      <input id="igDMInput" maxlength="1000" placeholder="Message..." autocomplete="off" style="min-width:0;flex:1;border:1px solid #ddd;border-radius:20px;padding:11px;color:#222;background:white">
+      <button style="width:40px;height:40px;border-radius:50%;background:#087df5;color:white">↑</button>
+    </form>
+  `;
+
+  const list = $("igDMList");
+
+  function drawMessages() {
+    list.innerHTML = "";
+    messages.forEach(message => {
+      const bubble = document.createElement("div");
+      bubble.textContent = message.text;
+      bubble.style.cssText = `
+        align-self:flex-end;max-width:85%;padding:10px 13px;
+        border-radius:17px 17px 4px 17px;background:#087df5;
+        color:white;font-size:13px;overflow-wrap:anywhere;
+      `;
+      list.appendChild(bubble);
+    });
+    list.scrollTop = list.scrollHeight;
+  }
+
+  drawMessages();
+
+  $("igDMForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const input = $("igDMInput");
+    const value = input.value.trim();
+    if (!value) return;
+
+    messages.push({ text: value, time: Date.now() });
+    chats[contact] = messages;
+    localStorage.setItem("raka-chats", JSON.stringify(chats));
+    input.value = "";
+    drawMessages();
+  });
+
+  showScreen("appScreen");
+}
 
     function simulateCall(name) {
       $("callerName").textContent = name;

@@ -1,1 +1,1341 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b12">
+  <title>Raka's iPhone</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --text: #fff;
+      --muted: #c8c9d2;
+      --glass: rgba(255, 255, 255, .17);
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background:
+        radial-gradient(ellipse at 20% 20%, #28365b 0, transparent 45%),
+        radial-gradient(ellipse at 80% 80%, #493044 0, transparent 45%),
+        #08090e;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+        "Segoe UI", sans-serif;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      border: 0;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible {
+      outline: 2px solid white;
+      outline-offset: 3px;
+    }
+
+    .phone {
+      position: relative;
+      isolation: isolate;
+      width: min(390px, calc((100dvh - 40px) * 390 / 844));
+      aspect-ratio: 390 / 844;
+      max-height: calc(100dvh - 40px);
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 5px solid #303137;
+      border-radius: 49px;
+      background: #121626;
+      box-shadow:
+        0 0 0 1px #777880,
+        0 0 0 3px #101115,
+        0 24px 75px #000b,
+        inset 0 0 0 1px #ffffff15;
+    }
+
+    .wallpaper {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse at 15% 18%, #6175a9 0, transparent 35%),
+        radial-gradient(ellipse at 80% 36%, #865779 0, transparent 37%),
+        radial-gradient(ellipse at 50% 90%, #222f52 0, transparent 55%),
+        linear-gradient(150deg, #111a31, #151323 55%, #080c18);
+    }
+
+    .wallpaper::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #0001, #0003 65%, #0006);
+      pointer-events: none;
+    }
+
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      padding: 15px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 20;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .status-icons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .dynamic-island {
+      position: absolute;
+      z-index: 25;
+      top: 9px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 108px;
+      height: 30px;
+      background: #000;
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 1px #222;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      overflow: hidden;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* LOCK SCREEN */
+
+    .lock-screen {
+      text-align: center;
+      padding-top: 95px;
+      background: linear-gradient(180deg, #00000008, #00000010 60%, #0005);
+    }
+
+    .lock-hint {
+      font-size: 13px;
+      color: #e0e1ec;
+      margin-bottom: 12px;
+    }
+
+    .lock-date {
+      font-size: 17px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .lock-time {
+      font-size: clamp(66px, 20vw, 91px);
+      line-height: 1.05;
+      font-weight: 300;
+      letter-spacing: -4px;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 3px 22px #0002;
+    }
+
+    .lock-message {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 120px;
+      padding: 13px 16px;
+      border: 1px solid #ffffff18;
+      border-radius: 19px;
+      background: #d6d9e522;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .lock-message strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
+    .lock-bottom {
+      position: absolute;
+      bottom: 23px;
+      left: 0;
+      right: 0;
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .round-control {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #22273599;
+      border: 1px solid #ffffff2a;
+      font-size: 19px;
+    }
+
+    .swipe-hint {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 105px;
+      height: 4px;
+      border-radius: 8px;
+      background: #fff;
+      z-index: 40;
+    }
+
+    /* PASSCODE */
+
+    .passcode-screen {
+      text-align: center;
+      padding: 95px 22px 35px;
+      background: #10111beF;
+      backdrop-filter: blur(20px);
+    }
+
+    .passcode-screen h2 {
+      font-size: 23px;
+      font-weight: 600;
+      margin: 17px 0 8px;
+    }
+
+    .passcode-screen p {
+      font-size: 13px;
+      color: #c7c8d3;
+    }
+
+    .passcode-dots {
+      display: flex;
+      justify-content: center;
+      gap: 17px;
+      margin: 28px 0 22px;
+    }
+
+    .passcode-dot {
+      width: 11px;
+      height: 11px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+    }
+
+    .passcode-dot.filled {
+      background: white;
+    }
+
+    .keypad {
+      width: min(270px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px 20px;
+    }
+
+    .key {
+      aspect-ratio: 1;
+      max-height: 61px;
+      border-radius: 50%;
+      background: #ffffff20;
+      font-size: 25px;
+      font-weight: 400;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+    }
+
+    .key:active {
+      background: #ffffff48;
+    }
+
+    .key small {
+      font-size: 8px;
+      letter-spacing: 2px;
+      margin-top: 1px;
+    }
+
+    .key.action {
+      background: transparent;
+      font-size: 12px;
+    }
+
+    .passcode-error {
+      min-height: 17px;
+      color: #ff8d98 !important;
+      margin-bottom: 7px;
+    }
+
+    /* HOME SCREEN */
+
+    .home-screen {
+      padding: 67px 17px 92px;
+    }
+
+    .welcome {
+      margin: 9px 5px 21px;
+      text-shadow: 0 2px 14px #0004;
+    }
+
+    .welcome .small-date {
+      font-size: 13px;
+      color: #e1e2ed;
+      margin-bottom: 5px;
+    }
+
+    .welcome h1 {
+      font-size: 27px;
+      font-weight: 650;
+      letter-spacing: -.7px;
+    }
+
+    .widget-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    .widget {
+      min-height: 95px;
+      border-radius: 20px;
+      padding: 12px;
+      border: 1px solid #ffffff20;
+      background: #11162570;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .widget-label {
+      color: #d0d2df;
+      font-size: 10px;
+      margin-bottom: 8px;
+    }
+
+    .widget-main {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .widget-sub {
+      color: #d0d2df;
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .calendar-widget {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .calendar-number {
+      font-size: 30px;
+      font-weight: 600;
+    }
+
+    .calendar-month {
+      font-size: 11px;
+      color: #e0d6e9;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 7px;
+      row-gap: 21px;
+    }
+
+    .app {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+    }
+
+    .app-icon {
+      width: clamp(45px, 14vw, 57px);
+      height: clamp(45px, 14vw, 57px);
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      font-size: 27px;
+      box-shadow:
+        inset 0 1px 1px #ffffff7a,
+        inset 0 -1px 1px #0002,
+        0 4px 9px #0003;
+      transition: transform .12s;
+    }
+
+    .app:active .app-icon {
+      transform: scale(.91);
+    }
+
+    .app-label {
+      width: 100%;
+      font-size: 10px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 1px 4px #000b;
+    }
+
+    .dock {
+      position: absolute;
+      left: 11px;
+      right: 11px;
+      bottom: 14px;
+      min-height: 78px;
+      padding: 10px 9px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 9px;
+      border: 1px solid #ffffff24;
+      border-radius: 25px;
+      background: #d5d8e52b;
+      backdrop-filter: blur(28px) saturate(150%);
+      -webkit-backdrop-filter: blur(28px) saturate(150%);
+      z-index: 10;
+    }
+
+    .dock .app {
+      flex: 1;
+    }
+
+    .dock .app-icon {
+      width: clamp(44px, 12vw, 53px);
+      height: clamp(44px, 12vw, 53px);
+      border-radius: 14px;
+    }
+
+    .dock .app-label {
+      display: none;
+    }
+
+    /* APP WINDOWS */
+
+    .app-screen {
+      background: #f5f5fa;
+      color: #17171c;
+    }
+
+    .app-topbar {
+      min-height: 94px;
+      padding: 52px 19px 13px;
+      background: rgba(248, 248, 252, .96);
+      border-bottom: 1px solid #dddde5;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .app-topbar h2 {
+      font-size: 26px;
+      letter-spacing: -.6px;
+    }
+
+    .back-button {
+      color: #087df5;
+      background: transparent;
+      font-size: 14px;
+      padding: 5px 0;
+    }
+
+    .app-content {
+      padding: 19px;
+      overflow-y: auto;
+      max-height: calc(100% - 94px);
+      overscroll-behavior: contain;
+    }
+
+    .app-card {
+      background: white;
+      border: 1px solid #e5e5ec;
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+
+    .app-card h3 {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .app-card p {
+      color: #73737e;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .note-input {
+      width: 100%;
+      min-height: 270px;
+      border: 0;
+      outline: none;
+      resize: vertical;
+      background: transparent;
+      font: inherit;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #17171c;
+    }
+
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .chat-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid #e5e5ec;
+      background: transparent;
+      color: #17171c;
+      text-align: left;
+      width: 100%;
+    }
+
+    .avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 18px;
+      background: linear-gradient(135deg, #5e78b8, #ba7e9f);
+      flex-shrink: 0;
+    }
+
+    .chat-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chat-details strong {
+      font-size: 14px;
+    }
+
+    .chat-details p {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #777781;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .settings-row {
+      padding: 14px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e7e7ee;
+      font-size: 14px;
+    }
+
+    .wallpaper-options {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .wallpaper-choice {
+      width: 57px;
+      height: 76px;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      background: linear-gradient(150deg, #677cb3, #9c668f, #16172b);
+    }
+
+    .wallpaper-choice:nth-child(2) {
+      background: linear-gradient(150deg, #e4b7a0, #b95b72, #362644);
+    }
+
+    .wallpaper-choice:nth-child(3) {
+      background: linear-gradient(150deg, #5c998b, #203d54, #101621);
+    }
+
+    .call-screen {
+      background: linear-gradient(180deg, #303b55, #121521 75%);
+      color: white;
+      text-align: center;
+      padding-top: 145px;
+    }
+
+    .call-avatar {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 42px;
+      background: linear-gradient(135deg, #8d9ec8, #59485f);
+    }
+
+    .call-name {
+      font-size: 27px;
+      font-weight: 500;
+    }
+
+    .call-sub {
+      margin-top: 8px;
+      color: #d2d4df;
+      font-size: 13px;
+    }
+
+    .call-actions {
+      position: absolute;
+      bottom: 65px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 52px;
+    }
+
+    .call-action {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      background: #ffffff20;
+    }
+
+    .call-action.end {
+      background: #ff453a;
+    }
+
+    .toast {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      top: 52px;
+      z-index: 50;
+      padding: 12px;
+      text-align: center;
+      border-radius: 13px;
+      background: #252631ed;
+      color: white;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: .2s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 430px) {
+      body {
+        padding: 0;
+        background: #090b12;
+      }
+
+      .phone {
+        width: min(100vw, calc(100dvh * 390 / 844));
+        max-height: 100dvh;
+        border-width: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .dynamic-island {
+        top: 10px;
+      }
+
+      .home-screen {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+    }
+
+    @media (max-height: 690px) and (min-width: 431px) {
+      body {
+        padding: 10px;
+      }
+
+      .phone {
+        width: min(320px, calc((100dvh - 20px) * 390 / 844));
+        max-height: calc(100dvh - 20px);
+      }
+
+      .home-screen {
+        padding-top: 60px;
+        padding-bottom: 83px;
+      }
+
+      .welcome {
+        margin-bottom: 13px;
+      }
+
+      .widget {
+        min-height: 75px;
+      }
+
+      .widget-grid {
+        margin-bottom: 17px;
+      }
+
+      .app-grid {
+        row-gap: 14px;
+      }
+
+      .dock {
+        bottom: 9px;
+        min-height: 67px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="phone" id="phone">
+    <div class="wallpaper" id="wallpaper"></div>
+
+    <div class="status-bar">
+      <span id="statusTime">9:41</span>
+      <span class="status-icons">
+        <span>●</span><span>◔</span><span>▰</span>
+      </span>
+    </div>
+
+    <div class="dynamic-island"></div>
+    <div class="toast" id="toast"></div>
+
+    <!-- LOCK SCREEN -->
+    <section class="screen lock-screen active" id="lockScreen">
+      <p class="lock-hint">⌑ &nbsp; Locked</p>
+      <p class="lock-date" id="lockDate">Saturday, October 24</p>
+      <div class="lock-time" id="lockTime">09:41</div>
+
+      <div class="lock-message">
+        <strong>NOTIFICATIONS</strong>
+        Your iPhone is ready.
+        <br>Swipe up to unlock.
+      </div>
+
+      <div class="lock-bottom">
+        <button class="round-control" aria-label="Flashlight"
+          onclick="showToast('Flashlight is on')">⌁</button>
+        <button class="round-control" aria-label="Camera"
+          onclick="openApp('Photos')">◎</button>
+      </div>
+    </section>
+
+    <!-- PASSCODE SCREEN -->
+    <section class="screen passcode-screen" id="passcodeScreen">
+      <div style="font-size:35px">⌑</div>
+      <h2>Enter Passcode</h2>
+      <p>Enter the passcode to unlock Raka's iPhone.</p>
+
+      <div class="passcode-dots" id="passcodeDots">
+        <span class="passcode-dot"></span>
+        <span class="passcode-dot"></span>
+        <span class="passcode-dot"></span>
+        <span class="passcode-dot"></span>
+      </div>
+
+      <p class="passcode-error" id="passcodeError"></p>
+
+      <div class="keypad">
+        <button class="key" onclick="pressKey('1')">1</button>
+        <button class="key" onclick="pressKey('2')">2<small>ABC</small></button>
+        <button class="key" onclick="pressKey('3')">3<small>DEF</small></button>
+        <button class="key" onclick="pressKey('4')">4<small>GHI</small></button>
+        <button class="key" onclick="pressKey('5')">5<small>JKL</small></button>
+        <button class="key" onclick="pressKey('6')">6<small>MNO</small></button>
+        <button class="key" onclick="pressKey('7')">7<small>PQRS</small></button>
+        <button class="key" onclick="pressKey('8')">8<small>TUV</small></button>
+        <button class="key" onclick="pressKey('9')">9<small>WXYZ</small></button>
+        <button class="key action" onclick="cancelPasscode()">Cancel</button>
+        <button class="key" onclick="pressKey('0')">0</button>
+        <button class="key action" onclick="deleteKey()">Delete</button>
+      </div>
+    </section>
+
+    <!-- HOME SCREEN -->
+    <section class="screen home-screen" id="homeScreen">
+      <div class="welcome">
+        <p class="small-date" id="homeDate">Saturday, October 24</p>
+        <h1>Good afternoon.</h1>
+      </div>
+
+      <div class="widget-grid">
+        <div class="widget">
+          <p class="widget-label">WEATHER · MALANG</p>
+          <div class="widget-main">☁️ 24°</div>
+          <p class="widget-sub">Cloudy</p>
+        </div>
+
+        <div class="widget">
+          <p class="widget-label">CALENDAR</p>
+          <div class="calendar-widget">
+            <span class="calendar-number" id="calendarDay">24</span>
+            <span class="calendar-month" id="calendarMonth">OCT<br>SATURDAY</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-grid">
+        <button class="app" onclick="openApp('Messages')">
+          <span class="app-icon" style="background:linear-gradient(#67e879,#20b64e)">☏</span>
+          <span class="app-label">Messages</span>
+        </button>
+
+        <button class="app" onclick="openApp('Calendar')">
+          <span class="app-icon" style="background:#fff;color:#e34c4c;display:flex;flex-direction:column">
+            <span style="font-size:10px;font-weight:700;margin-top:5px">SAT</span>
+            <span id="calendarIconDay" style="font-size:25px">24</span>
+          </span>
+          <span class="app-label">Calendar</span>
+        </button>
+
+        <button class="app" onclick="openApp('Photos')">
+          <span class="app-icon" style="background:#fff;font-size:30px">🌈</span>
+          <span class="app-label">Photos</span>
+        </button>
+
+        <button class="app" onclick="openApp('Camera')">
+          <span class="app-icon" style="background:linear-gradient(#656773,#242630)">📷</span>
+          <span class="app-label">Camera</span>
+        </button>
+
+        <button class="app" onclick="openApp('Notes')">
+          <span class="app-icon" style="background:linear-gradient(#fff 0 27%,#ffd950 27% 100%);color:#ad8211">▤</span>
+          <span class="app-label">Notes</span>
+        </button>
+
+        <button class="app" onclick="openApp('Files')">
+          <span class="app-icon" style="background:linear-gradient(#85c5ff,#1682f7)">📁</span>
+          <span class="app-label">Files</span>
+        </button>
+
+        <button class="app" onclick="openApp('Instagram')">
+          <span class="app-icon" style="background:linear-gradient(135deg,#8148c7,#ed397b,#ffb44d)">◎</span>
+          <span class="app-label">Instagram</span>
+        </button>
+
+        <button class="app" onclick="openApp('Mail')">
+          <span class="app-icon" style="background:linear-gradient(#74c9ff,#1676e9)">✉</span>
+          <span class="app-label">Mail</span>
+        </button>
+
+        <button class="app" onclick="openApp('Maps')">
+          <span class="app-icon" style="background:#f9f9f9">🗺️</span>
+          <span class="app-label">Maps</span>
+        </button>
+
+        <button class="app" onclick="openApp('Music')">
+          <span class="app-icon" style="background:linear-gradient(#ff829a,#ed174b)">♫</span>
+          <span class="app-label">Music</span>
+        </button>
+
+        <button class="app" onclick="openApp('Settings')">
+          <span class="app-icon" style="background:linear-gradient(#c8cbd2,#858a95)">⚙</span>
+          <span class="app-label">Settings</span>
+        </button>
+
+        <button class="app" onclick="openApp('Phone')">
+          <span class="app-icon" style="background:linear-gradient(#66e67c,#16ad4b)">☎</span>
+          <span class="app-label">Phone</span>
+        </button>
+      </div>
+
+      <div class="dock">
+        <button class="app" onclick="openApp('Phone')">
+          <span class="app-icon" style="background:linear-gradient(#68e77b,#19ae4c)">☎</span>
+          <span class="app-label">Phone</span>
+        </button>
+
+        <button class="app" onclick="openApp('Messages')">
+          <span class="app-icon" style="background:linear-gradient(#6aeb7e,#20b950)">☏</span>
+          <span class="app-label">Messages</span>
+        </button>
+
+        <button class="app" onclick="openApp('Instagram')">
+          <span class="app-icon" style="background:linear-gradient(135deg,#8148c7,#ed397b,#ffb44d)">◎</span>
+          <span class="app-label">Instagram</span>
+        </button>
+
+        <button class="app" onclick="openApp('Music')">
+          <span class="app-icon" style="background:linear-gradient(#ff829a,#ed174b)">♫</span>
+          <span class="app-label">Music</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- APP WINDOW -->
+    <section class="screen app-screen" id="appScreen">
+      <header class="app-topbar">
+        <button class="back-button" onclick="goHome()">‹ Home</button>
+        <h2 id="appTitle">Notes</h2>
+        <span style="width:40px"></span>
+      </header>
+      <div class="app-content" id="appContent"></div>
+    </section>
+
+    <!-- INCOMING CALL -->
+    <section class="screen call-screen" id="callScreen">
+      <div class="call-avatar">R</div>
+      <div class="call-name" id="callerName">Unknown</div>
+      <p class="call-sub" id="callStatus">incoming call</p>
+      <div class="call-actions">
+        <button class="call-action end" onclick="endCall()" aria-label="Decline call">☎</button>
+        <button class="call-action" style="background:#31c75b" onclick="answerCall()" aria-label="Answer call">☎</button>
+      </div>
+    </section>
+
+    <div class="swipe-hint" id="homeIndicator"></div>
+  </main>
+
+  <script>
+    const PASSCODE = "1234";
+    let enteredCode = "";
+    let currentApp = "";
+    let callAnswered = false;
+
+    const $ = id => document.getElementById(id);
+
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      const date = now.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric"
+      });
+
+      $("statusTime").textContent = time;
+      $("lockTime").textContent = time;
+      $("lockDate").textContent = date;
+      $("homeDate").textContent = date;
+      $("calendarDay").textContent = now.getDate();
+      $("calendarIconDay").textContent = now.getDate();
+      $("calendarMonth").innerHTML =
+        now.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
+        + "<br>" +
+        now.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
+    }
+
+    updateClock();
+    setInterval(updateClock, 10000);
+
+    function showScreen(screenId) {
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+      });
+      $(screenId).classList.add("active");
+    }
+
+    function unlock() {
+      enteredCode = "";
+      updateDots();
+      $("passcodeError").textContent = "";
+      showScreen("passcodeScreen");
+    }
+
+    function cancelPasscode() {
+      enteredCode = "";
+      updateDots();
+      showScreen("lockScreen");
+    }
+
+    function pressKey(number) {
+      if (enteredCode.length >= 4) return;
+      enteredCode += number;
+      updateDots();
+
+      if (enteredCode.length === 4) {
+        if (enteredCode === PASSCODE) {
+          $("passcodeError").textContent = "";
+          showScreen("homeScreen");
+        } else {
+          $("passcodeError").textContent = "Incorrect passcode. Try again.";
+          setTimeout(() => {
+            enteredCode = "";
+            updateDots();
+          }, 550);
+        }
+      }
+    }
+
+    function deleteKey() {
+      enteredCode = enteredCode.slice(0, -1);
+      $("passcodeError").textContent = "";
+      updateDots();
+    }
+
+    function updateDots() {
+      document.querySelectorAll(".passcode-dot").forEach((dot, index) => {
+        dot.classList.toggle("filled", index < enteredCode.length);
+      });
+    }
+
+    function goHome() {
+      currentApp = "";
+      showScreen("homeScreen");
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    const appContent = {
+      Notes: `
+        <div class="app-card">
+          <p>NOTES · ICLOUD</p>
+          <textarea class="note-input" id="noteText"
+            placeholder="Write something..."></textarea>
+        </div>
+        <p style="font-size:11px;color:#777;text-align:center">
+          Notes are saved in this browser.
+        </p>
+      `,
+
+      Photos: `
+        <div class="app-card">
+          <h3>Library</h3>
+          <p>Your photos and memories will appear here.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+          <div style="aspect-ratio:1;background:linear-gradient(140deg,#c5b3d8,#475c82);border-radius:9px"></div>
+          <div style="aspect-ratio:1;background:linear-gradient(140deg,#e9b7a0,#7b4968);border-radius:9px"></div>
+          <div style="aspect-ratio:1;background:linear-gradient(140deg,#9fc5c0,#294b5d);border-radius:9px"></div>
+        </div>
+      `,
+
+      Calendar: `
+        <div class="app-card">
+          <h3 id="fullCalendarDate"></h3>
+          <p>Your plans and events will appear here.</p>
+        </div>
+        <div class="app-card">
+          <h3>Upcoming</h3>
+          <p>No events scheduled.</p>
+        </div>
+      `,
+
+      Instagram: `
+        <div class="app-card">
+          <h3>Instagram</h3>
+          <p>raka.jpg · Suggested for you</p>
+          <div style="height:220px;margin-top:12px;border-radius:12px;background:linear-gradient(150deg,#66789a,#c18d9e,#252c41)"></div>
+          <p style="margin-top:12px;color:#333">♡  Like &nbsp; ◯ Comment &nbsp; ↗ Share</p>
+        </div>
+        <div class="app-card">
+          <h3>Messages</h3>
+          <p>Instagram conversations can be added here.</p>
+        </div>
+      `,
+
+      Files: `
+        <div class="app-card"><h3>Recents</h3><p>No recent files.</p></div>
+        <div class="app-card"><h3>On My iPhone</h3><p>Browse saved AU documents here.</p></div>
+        <div class="app-card"><h3>iCloud Drive</h3><p>Your fictional files and folders.</p></div>
+      `,
+
+      Mail: `
+        <div class="app-card"><h3>Inbox</h3><p>No new messages.</p></div>
+        <div class="app-card"><h3>VIP</h3><p>Important emails will appear here.</p></div>
+      `,
+
+      Maps: `
+        <div class="app-card">
+          <h3>Maps</h3>
+          <p>A fictional map screen for Raka's AU.</p>
+          <div style="height:250px;margin-top:13px;border-radius:12px;background:linear-gradient(35deg,#b7d0ba 20%,#e9e3ce 20% 40%,#b7d0ba 40% 60%,#e9e3ce 60% 80%,#b7d0ba 80%)"></div>
+        </div>
+      `,
+
+      Camera: `
+        <div class="app-card">
+          <h3>Camera</h3>
+          <p>Camera preview is a placeholder in this first version.</p>
+          <div style="height:270px;margin-top:12px;border-radius:13px;background:#25262a;display:grid;place-items:center;color:#aaa">Camera preview</div>
+        </div>
+      `,
+
+      Music: `
+        <div class="app-card">
+          <h3>Recently Played</h3>
+          <p>Your AU soundtrack goes here.</p>
+        </div>
+        <div class="app-card">
+          <h3>Now Playing</h3>
+          <p>No track selected.</p>
+          <div style="display:flex;justify-content:center;gap:30px;font-size:25px;margin-top:18px">
+            <button onclick="showToast('Previous track')" style="color:#222;background:none">◀</button>
+            <button onclick="showToast('Add music playback later')" style="color:#222;background:none">▶</button>
+            <button onclick="showToast('Next track')" style="color:#222;background:none">▶|</button>
+          </div>
+        </div>
+      `,
+
+      Phone: `
+        <div class="app-card">
+          <h3>Favorites</h3>
+          <p>Your favorite contacts will appear here.</p>
+        </div>
+        <div class="app-card">
+          <h3>Recent Calls</h3>
+          <p>No recent calls.</p>
+        </div>
+        <button onclick="simulateCall('Unknown Caller')"
+          style="width:100%;padding:14px;border-radius:13px;background:#24b95a;color:white">
+          Simulate incoming call
+        </button>
+      `,
+
+      Messages: `
+        <div class="chat-list">
+          <button class="chat-row" onclick="openChat('Unknown')">
+            <span class="avatar">?</span>
+            <span class="chat-details">
+              <strong>Unknown</strong>
+              <p id="lastMessageUnknown">Tap to open conversation</p>
+            </span>
+            <span style="color:#999;font-size:11px">now</span>
+          </button>
+          <button class="chat-row" onclick="openChat('Best Friend')">
+            <span class="avatar">B</span>
+            <span class="chat-details">
+              <strong>Best Friend</strong>
+              <p id="lastMessageBestFriend">No messages yet</p>
+            </span>
+          </button>
+        </div>
+      `,
+
+      Settings: `
+        <div class="app-card" style="display:flex;align-items:center;gap:12px">
+          <div class="avatar">R</div>
+          <div><h3>Raka</h3><p>Apple Account</p></div>
+        </div>
+        <div class="app-card">
+          <div class="settings-row"><span>✈️ &nbsp; Airplane Mode</span><span>○</span></div>
+          <div class="settings-row"><span>◉ &nbsp; Wi-Fi</span><span>Connected</span></div>
+          <div class="settings-row"><span>ᛒ &nbsp; Bluetooth</span><span>On</span></div>
+          <h3 style="margin-top:17px">Wallpaper</h3>
+          <div class="wallpaper-options">
+            <button class="wallpaper-choice" onclick="changeWallpaper(1)" aria-label="Blue wallpaper"></button>
+            <button class="wallpaper-choice" onclick="changeWallpaper(2)" aria-label="Pink wallpaper"></button>
+            <button class="wallpaper-choice" onclick="changeWallpaper(3)" aria-label="Green wallpaper"></button>
+          </div>
+        </div>
+        <div class="app-card">
+          <h3>Passcode</h3>
+          <p>Demo passcode: 1234</p>
+        </div>
+      `
+    };
+
+    function openApp(name) {
+      currentApp = name;
+      $("appTitle").textContent = name;
+      $("appContent").innerHTML =
+        appContent[name] || `
+          <div class="app-card">
+            <h3>${name}</h3>
+            <p>This app will be added in a future update.</p>
+          </div>
+        `;
+      showScreen("appScreen");
+
+      if (name === "Notes") {
+        const note = $("noteText");
+        note.value = localStorage.getItem("raka-note") || "";
+        note.addEventListener("input", () => {
+          localStorage.setItem("raka-note", note.value);
+        });
+      }
+
+      if (name === "Calendar") {
+        $("fullCalendarDate").textContent =
+          new Date().toLocaleDateString("en-US", {
+            weekday: "long", month: "long", day: "numeric", year: "numeric"
+          });
+      }
+    }
+
+    function changeWallpaper(style) {
+      const wallpaper = $("wallpaper");
+      const styles = {
+        1: "radial-gradient(ellipse at 15% 18%, #6175a9 0, transparent 35%), radial-gradient(ellipse at 80% 36%, #865779 0, transparent 37%), radial-gradient(ellipse at 50% 90%, #222f52 0, transparent 55%), linear-gradient(150deg, #111a31, #151323 55%, #080c18)",
+        2: "radial-gradient(ellipse at 15% 18%, #e4b7a0 0, transparent 35%), radial-gradient(ellipse at 80% 36%, #b95b72 0, transparent 37%), radial-gradient(ellipse at 50% 90%, #362644 0, transparent 55%), linear-gradient(150deg, #36243b, #291827 55%, #110e18)",
+        3: "radial-gradient(ellipse at 15% 18%, #5c998b 0, transparent 35%), radial-gradient(ellipse at 80% 36%, #203d54 0, transparent 37%), radial-gradient(ellipse at 50% 90%, #101621 0, transparent 55%), linear-gradient(150deg, #173b3a, #14222c 55%, #080c18)"
+      };
+      wallpaper.style.background = styles[style];
+      localStorage.setItem("raka-wallpaper", String(style));
+      showToast("Wallpaper updated");
+    }
+
+    const savedWallpaper = localStorage.getItem("raka-wallpaper");
+    if (savedWallpaper) changeWallpaper(Number(savedWallpaper));
+
+    const chats = JSON.parse(localStorage.getItem("raka-chats") || "{}");
+
+    function openChat(contact) {
+      const messages = chats[contact] || [];
+      $("appTitle").textContent = contact;
+      $("appContent").innerHTML = `
+        <div id="chatMessages" style="display:flex;flex-direction:column;gap:9px;min-height:280px"></div>
+        <form id="chatForm" style="position:absolute;bottom:13px;left:12px;right:12px;display:flex;gap:8px;background:#f5f5fa;padding:8px 0">
+          <input id="chatInput" placeholder="iMessage" autocomplete="off"
+            style="min-width:0;flex:1;border:1px solid #d6d6df;border-radius:20px;padding:11px;background:white;color:#222">
+          <button style="background:#087df5;color:white;border-radius:50%;width:40px;height:40px">↑</button>
+        </form>
+      `;
+
+      const list = $("chatMessages");
+      messages.forEach(message => addChatBubble(list, message));
+
+      $("chatForm").addEventListener("submit", event => {
+        event.preventDefault();
+        const input = $("chatInput");
+        const value = input.value.trim();
+        if (!value) return;
+
+        const message = { text: value, time: Date.now() };
+        chats[contact] ||= [];
+        chats[contact].push(message);
+        localStorage.setItem("raka-chats", JSON.stringify(chats));
+
+        addChatBubble(list, message);
+        input.value = "";
+
+        const previewId = contact === "Best Friend"
+          ? "lastMessageBestFriend" : "lastMessageUnknown";
+        const preview = $(previewId);
+        if (preview) preview.textContent = value;
+      });
+
+      showScreen("appScreen");
+      $("appContent").scrollTop = 0;
+    }
+
+    function addChatBubble(container, message) {
+      const bubble = document.createElement("div");
+      bubble.textContent = message.text;
+      bubble.style.cssText = `
+        align-self:flex-end;max-width:82%;padding:10px 13px;
+        border-radius:17px 17px 4px 17px;background:#087df5;
+        color:white;font-size:14px;line-height:1.4;overflow-wrap:anywhere;
+      `;
+      container.appendChild(bubble);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function simulateCall(name) {
+      $("callerName").textContent = name;
+      $("callStatus").textContent = "incoming call";
+      callAnswered = false;
+      showScreen("callScreen");
+    }
+
+    function answerCall() {
+      callAnswered = true;
+      $("callStatus").textContent = "Call connected";
+      showToast("Call connected");
+    }
+
+    function endCall() {
+      showToast(callAnswered ? "Call ended" : "Call declined");
+      setTimeout(() => showScreen("homeScreen"), 500);
+    }
+
+    // Swipe up to unlock or return home.
+    let touchStartY = 0;
+
+    $("phone").addEventListener("touchstart", event => {
+      touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+
+    $("phone").addEventListener("touchend", event => {
+      const touchEndY = event.changedTouches[0].clientY;
+      const swipeUp = touchStartY - touchEndY > 45;
+
+      if (!swipeUp) return;
+
+      if ($("lockScreen").classList.contains("active")) {
+        unlock();
+      } else if ($("homeScreen").classList.contains("active")) {
+        // Already on home screen.
+      } else if ($("appScreen").classList.contains("active")) {
+        goHome();
+      }
+    }, { passive: true });
+
+    // Mouse/touch click also lets you open the passcode screen.
+    $("lockScreen").addEventListener("click", event => {
+      if (event.target.closest("button")) return;
+      unlock();
+    });
+
+    // Initialize message previews from saved chats.
+    if (chats.Unknown?.length) {
+      $("lastMessageUnknown").textContent =
+        chats.Unknown[chats.Unknown.length - 1].text;
+    }
+    if (chats["Best Friend"]?.length) {
+      $("lastMessageBestFriend").textContent =
+        chats["Best Friend"][chats["Best Friend"].length - 1].text;
+    }
+  </script>
+</body>
+</html>
+

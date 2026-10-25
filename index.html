@@ -1726,44 +1726,27 @@ function openInstagramDM() {
     }
 
     // Swipe up to unlock or return home.
-    let touchStartY = 0;
-    let touchCurrentY = 0;
-    let isDraggingLock = false;
+   let touchStartY = 0;
 
-    const phone = $("phone");
-    const lockScreen = $("lockScreen");
+$("phone").addEventListener("touchstart", event => {
+  touchStartY = event.touches[0].clientY;
+}, { passive: true });
 
-    phone.addEventListener("touchstart", event => {
-      if (!lockScreen.classList.contains("active")) return;
-      
-      touchStartY = event.touches[0].clientY;
-      touchCurrentY = touchStartY;
-      isDraggingLock = true;  
+$("phone").addEventListener("touchend", event => {
+  const touchEndY = event.changedTouches[0].clientY;
+  const swipeUp = touchStartY - touchEndY > 45;
 
-      lockScreen.style.transition = "none";
-    }, { passive: true });
+  if (!swipeUp) return;
 
-    phone.addEventListener("touchend", () => {
-      if (!isDraggingLock) return;
-
-      isDraggingLock = false;
-      const distance = touchStartY - touchCurrentY;
-
-      lockScreen.style.transition = "transform 0.32s ease;"
-  
-
-      if (distance > 70) {
-        lockScreen.style.transform = "translateY"(-100%)";
-                                                  
-        setTime(() =>  {
-          lockScreen.style.transform = "";
-          unlock();
-        }, 320);
-      } else {
-        lockScreen.style.transform = "";
-      }
-    }, { passive: true });
-
+  if ($("lockScreen").classList.contains("active")) {
+    unlock();
+  } else if ($("homeScreen").classList.contains("active")) {
+    // Already on home screen.
+  } else if ($("appScreen").classList.contains("active")) {
+    goHome();
+  }
+}, { passive: true });
+    
     // Mouse/touch click also lets you open the passcode screen.
     $("lockScreen").addEventListener("click", event => {
       if (event.target.closest("button")) return;

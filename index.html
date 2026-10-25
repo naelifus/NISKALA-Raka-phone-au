@@ -1228,6 +1228,15 @@
       
 if (name === "Instagram") {
   renderInstagramFeed();
+
+  requestAnimationFrame(() => {
+    const feed = $("igFeed");
+    if (feed) {
+      feed.scrollTop = 0;
+      feed.scrollIntoView({ block: "start" });
+    }
+    window.scrollTo(0, 0);
+  });
 }
       if (name === "Notes") {
         const note = $("noteText");

@@ -131,12 +131,23 @@
     .screen {
       position: absolute;
       inset: 0;
-      display: none;
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(12px);
       overflow: hidden;
+      transition:
+        opacity 0.32s ease,
+        transform 0.38s ease,
+        visibility 0.38s ease;
+      ponter-events: none;
     }
 
     .screen.active {
-      display: block;
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
 
       /* LOCK SCREEN */
@@ -1069,10 +1080,14 @@
     setInterval(updateClock, 10000);
 
     function showScreen(screenId) {
+      const nextScreen = $(screenId);
+      if (!nextScreen) return;
+      
       document.querySelectorAll(".screen").forEach(screen => {
         screen.classList.remove("active");
       });
-      $(screenId).classList.add("active");
+      
+      nextScreen.classList.add("active");
     }
 
     function unlock() {

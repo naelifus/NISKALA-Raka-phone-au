@@ -100,6 +100,10 @@
       font-weight: 650;
     }
 
+    .lock-screen ~ .status-bar {
+      display: none;
+    }
+
     .status-icons {
       display: flex;
       gap: 5px;
@@ -154,7 +158,8 @@
       z-index: 50;
     }
     
-    .lock-screen .status-bar {
+    .phone:has(#lockScreen.active) > .status-bar,
+    .phone:has(#lockScreen.active) > .dynamic-island {
       display: none;
     }
     
@@ -260,7 +265,7 @@
 
     .swipe-hint {
       position: absolute;
-      bottom: 8px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
       width: 105px;

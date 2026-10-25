@@ -150,6 +150,7 @@
       top: 12px;
       left: 18px;
       right: 18px;
+      height: 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -159,8 +160,16 @@
       z-index: 50;
     }
     
-    .phone:has(#lockScreen.active) > .status-bar,
+    .lock-carrier {
       display: none;
+    }
+    
+    .phone:has(#lockScreen.active) > .dynamic-island {
+      display: block;
+      z-index: 25;
+      top: 9px;
+      left: 50%;
+      transform: translatex(-50%);
     }
     
     .lock-status-icons {
@@ -168,6 +177,7 @@
       align-items: center;
       gap: 7px;
       font-size: 11px;
+      margin-left: auto;
     }
     
     .lock-battery {

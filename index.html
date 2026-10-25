@@ -1611,8 +1611,6 @@ const waContacts = [
   { name: "Niskala Group", initials: "N", color: "#7e9c85", preview: "Raras: pada ke mana?" }
 ];
 
-let waChats = JSON.parse(localStorage.getItem("raka-wa-chats") || "{}");
-
 function waSaveChats() {
   localStorage.setItem("raka-wa-chats", JSON.stringify(waChats));
 }

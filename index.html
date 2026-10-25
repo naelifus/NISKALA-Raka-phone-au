@@ -103,6 +103,10 @@
     .lock-screen ~ .status-bar {
       display: none;
     }
+    
+    .phone:has(#lockScreen.active) > .status-bar {
+  display: none;
+}
 
     .status-icons {
       display: flex;

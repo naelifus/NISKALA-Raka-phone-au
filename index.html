@@ -1650,14 +1650,14 @@ function renderWhatsAppHome(tab = "Chats") {
       return `
         <button class="chat-row" data-wa-contact="${contact.name}"
           onclick="openWhatsAppChat('${contact.name}')"
-          style="display:flex;align-items:center;gap:12px;width:100%;padding:10px 2px;border:0;background:transparent;text-align:left;color:inherit">
+          style="display:flex;align-items:center;gap:9px;width:100%;padding:7px 2px;border:0;background:transparent;text-align:left;color:inherit">
           ${waAvatar(contact.name)}
           <span style="min-width:0;flex:1;border-bottom:1px solid #ededed;padding:3px 0 12px">
             <span style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-              <strong style="font-size:15px;font-weight:600">${contact.name}</strong>
+              <strong style="font-size:13px;font-weight:600">${contact.name}</strong>
               <span style="font-size:11px;color:#777">${time}</span>
             </span>
-            <span style="display:block;color:#777;font-size:13px;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</span>
+            <span style="display:block;color:#777;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</span>
           </span>
         </button>`;
     }).join("");
@@ -1673,8 +1673,8 @@ function renderWhatsAppHome(tab = "Chats") {
       <button onclick="showToast('Pilih foto atau video untuk status Raka')"
         style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 0;background:transparent;color:inherit;text-align:left">
         <span style="position:relative">
-          <span style="display:flex;width:52px;height:52px;border-radius:50%;background:#6b879e;color:white;align-items:center;justify-content:center;font-size:20px">R</span>
-          <span style="position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border:2px solid white;border-radius:50%;background:#25a55b;color:white;display:flex;align-items:center;justify-content:center;font-size:17px">+</span>
+          <span style="display:flex;width:42px;height:42px;border-radius:50%;background:#6b879e;color:white;align-items:center;justify-content:center;font-size:16px">R</span>
+          <span style="position:absolute;right:-2px;bottom:-2px;width:18px;height:18px;border:2px solid white;border-radius:50%;background:#25a55b;color:white;display:flex;align-items:center;justify-content:center;font-size:17px">+</span>
         </span>
         <span>
           <strong>Tambah status</strong>
@@ -1703,9 +1703,9 @@ function renderWhatsAppHome(tab = "Chats") {
   if (tab === "Communities") {
     area.innerHTML = `
       <button onclick="openWhatsAppChat('Niskala Group')"
-        style="display:flex;align-items:center;gap:12px;width:100%;padding:15px 0;background:transparent;color:inherit;text-align:left">
-        ${waAvatar("Niskala Group", 54)}
-        <span><strong>Niskala</strong><span style="display:block;color:#777;font-size:13px;margin-top:5px">Niskala Group · 8 members</span></span>
+        style="display:flex;align-items:center;gap:9px;width:100%;padding:8px 0;background:transparent;color:inherit;text-align:left">
+        ${waAvatar("Niskala Group", 42)}
+        <span><strong>Niskala</strong><span style="display:block;color:#777;font-size:11px;margin-top:3px">Niskala Group · 8 members</span></span>
       </button>
       <p style="font-size:13px;color:#777">Community conversations for Raka's AU.</p>`;
     return;
@@ -1713,11 +1713,11 @@ function renderWhatsAppHome(tab = "Chats") {
 
   if (tab === "Calls") {
     area.innerHTML = `
-      <h3 style="margin:10px 0 16px">Recent</h3>
+      <h3 style="margin:8px 0 12px">Recent</h3>
       ${waContacts.filter(c => c.name !== "Niskala Group").map(c => `
-        <div style="display:flex;align-items:center;gap:12px;padding:11px 0">
+        <div style="display:flex;align-items:center;gap:9px;padding:7px 0">
           ${waAvatar(c.name)}
-          <span style="flex:1"><strong>${c.name}</strong><span style="display:block;color:#777;font-size:12px;margin-top:5px">No recent calls</span></span>
+          <span style="flex:1"><strong>${c.name}</strong><span style="display:block;color:#777;font-size:11px;margin-top:3px">No recent calls</span></span>
           <button onclick="showToast('Simulated call to ${c.name}')"
             style="background:transparent;color:#16834a;font-size:20px">☎</button>
         </div>`).join("")}`;

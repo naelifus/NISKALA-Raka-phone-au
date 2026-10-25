@@ -1425,6 +1425,35 @@
         </div>
       `,
 
+
+WhatsApp: `
+  <div style="font-family:Arial,sans-serif;color:#111;padding:4px 0 12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <h2 style="font-size:30px;margin:0;letter-spacing:-1px">WhatsApp</h2>
+      <button onclick="showToast('New chat')" style="background:none;color:#16834a;font-size:25px">＋</button>
+    </div>
+
+    <input
+      type="search"
+      placeholder="Ask Meta AI or Search"
+      oninput="filterWhatsAppContacts(this.value)"
+      style="box-sizing:border-box;width:100%;padding:12px 14px;border:0;border-radius:12px;background:#ededf0;font-size:14px;margin-bottom:16px"
+    >
+
+    <div style="display:flex;gap:8px;overflow-x:auto;margin-bottom:18px">
+      <button onclick="renderWhatsAppHome('Chats')" style="border:0;border-radius:18px;padding:9px 15px;background:#d9fdd3;color:#176b36">Chats</button>
+      <button onclick="renderWhatsAppHome('Updates')" style="border:0;border-radius:18px;padding:9px 15px;background:#f0f0f0;color:#333">Updates</button>
+      <button onclick="renderWhatsAppHome('Communities')" style="border:0;border-radius:18px;padding:9px 15px;background:#f0f0f0;color:#333">Communities</button>
+      <button onclick="renderWhatsAppHome('Calls')" style="border:0;border-radius:18px;padding:9px 15px;background:#f0f0f0;color:#333">Calls</button>
+    </div>
+
+    <div id="waHomeContent">
+      <div style="padding:12px;color:#777;font-size:13px">Your chats will appear here.</div>
+    </div>
+  </div>
+`,
+
+
       Settings: `
         <div class="app-card" style="display:flex;align-items:center;gap:12px">
           <div class="avatar">R</div>
@@ -1459,6 +1488,10 @@
           </div>
         `;
       showScreen("appScreen");
+      
+      if (name === "WhatsApp") {
+  renderWhatsAppHome("Chats");
+}
       
 if (name === "Instagram") {
   renderInstagramFeed();
@@ -1554,6 +1587,242 @@ if (name === "Instagram") {
       `;
       container.appendChild(bubble);
       container.scrollTop = container.scrollHeight;
+    }
+    
+    
+    const waDefaultContacts = [
+      "Raras", "Arya", "Diajeng", "Anindya",
+      "Sekar", "Rangga", "Rakha", "Komponen 8 Group"
+    ];
+
+    let waChats = JSON.parse(
+      localStorage.getItem("raka-wa-chats") || "{}"
+    );
+
+    
+const waContacts = [
+  { name: "Raras", initials: "R", color: "#c58b9c", preview: "nanti cerita di grup yaa" },
+  { name: "Arya", initials: "A", color: "#8d9cb5", preview: "lu udah di rumah?" },
+  { name: "Diajeng", initials: "D", color: "#d1a56f", preview: "WKWKWK serius?" },
+  { name: "Anindya", initials: "A", color: "#a28cbb", preview: "besok jadi kan?" },
+  { name: "Sekar", initials: "S", color: "#86a99b", preview: "aku kirim fotonya nanti" },
+  { name: "Rangga", initials: "R", color: "#8196a8", preview: "otw bentar" },
+  { name: "Rakha", initials: "R", color: "#b4a080", preview: "sip, aman" },
+  { name: "Niskala Group", initials: "N", color: "#7e9c85", preview: "Raras: pada ke mana?" }
+];
+
+let waChats = JSON.parse(localStorage.getItem("raka-wa-chats") || "{}");
+
+function waSaveChats() {
+  localStorage.setItem("raka-wa-chats", JSON.stringify(waChats));
+}
+
+function waTime(value) {
+  return new Date(value).toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function waAvatar(contact, size = 48) {
+  const item = waContacts.find(c => c.name === contact) || {
+    initials: "?", color: "#9ca3af"
+  };
+
+  return `<span style="
+    display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;
+    width:${size}px;height:${size}px;border-radius:50%;
+    background:${item.color};color:white;font-weight:600;font-size:${Math.round(size * 0.38)}px
+  ">${item.initials}</span>`;
+}
+
+function renderWhatsAppHome(tab = "Chats") {
+  $("appTitle").textContent = "WhatsApp";
+
+  const area = $("waHomeContent");
+  if (!area) return;
+
+  if (tab === "Chats") {
+    area.innerHTML = waContacts.map(contact => {
+      const messages = waChats[contact.name] || [];
+      const last = messages[messages.length - 1];
+      const preview = last ? last.text : contact.preview;
+      const time = last ? waTime(last.time) : "";
+
+      return `
+        <button class="chat-row" data-wa-contact="${contact.name}"
+          onclick="openWhatsAppChat('${contact.name}')"
+          style="display:flex;align-items:center;gap:12px;width:100%;padding:10px 2px;border:0;background:transparent;text-align:left;color:inherit">
+          ${waAvatar(contact.name)}
+          <span style="min-width:0;flex:1;border-bottom:1px solid #ededed;padding:3px 0 12px">
+            <span style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+              <strong style="font-size:15px;font-weight:600">${contact.name}</strong>
+              <span style="font-size:11px;color:#777">${time}</span>
+            </span>
+            <span style="display:block;color:#777;font-size:13px;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</span>
+          </span>
+        </button>`;
+    }).join("");
+    return;
+  }
+
+  if (tab === "Updates") {
+    area.innerHTML = `
+      <h3 style="margin:12px 0">Status</h3>
+      <p style="font-size:13px;color:#777">Updates from Raka and friends</p>
+      ${["Raka", ...waContacts.filter(c => c.name !== "Niskala Group").map(c => c.name)].map(name => `
+        <button onclick="showToast('${name} has no new updates')"
+          style="display:flex;align-items:center;gap:12px;width:100%;padding:11px 0;background:transparent;color:inherit;text-align:left">
+          <span style="padding:3px;border:2px solid #25a55b;border-radius:50%">
+            ${name === "Raka" ? '<span style="display:flex;width:42px;height:42px;border-radius:50%;background:#6b879e;color:white;align-items:center;justify-content:center">R</span>' : waAvatar(name, 42)}
+          </span>
+          <span><strong>${name}</strong><span style="display:block;color:#777;font-size:12px;margin-top:4px">Tap to view status</span></span>
+        </button>`).join("")}`;
+    return;
+  }
+
+  if (tab === "Communities") {
+    area.innerHTML = `
+      <button onclick="openWhatsAppChat('Niskala Group')"
+        style="display:flex;align-items:center;gap:12px;width:100%;padding:15px 0;background:transparent;color:inherit;text-align:left">
+        ${waAvatar("Niskala Group", 54)}
+        <span><strong>Niskala</strong><span style="display:block;color:#777;font-size:13px;margin-top:5px">Niskala Group · 8 members</span></span>
+      </button>
+      <p style="font-size:13px;color:#777">Community conversations for Raka's AU.</p>`;
+    return;
+  }
+
+  if (tab === "Calls") {
+    area.innerHTML = `
+      <h3 style="margin:10px 0 16px">Recent</h3>
+      ${waContacts.filter(c => c.name !== "Niskala Group").map(c => `
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 0">
+          ${waAvatar(c.name)}
+          <span style="flex:1"><strong>${c.name}</strong><span style="display:block;color:#777;font-size:12px;margin-top:5px">No recent calls</span></span>
+          <button onclick="showToast('Simulated call to ${c.name}')"
+            style="background:transparent;color:#16834a;font-size:20px">☎</button>
+        </div>`).join("")}`;
+  }
+}
+
+function openWhatsAppChat(contact) {
+  const messages = waChats[contact] || [];
+  $("appTitle").textContent = contact;
+
+  $("appContent").innerHTML = `
+    <div style="display:flex;flex-direction:column;height:100%;min-height:350px">
+      <div style="display:flex;align-items:center;gap:8px;padding-bottom:10px">
+        <button onclick="openWhatsAppList()" style="background:transparent;color:#16834a;font-size:15px">‹ Chats</button>
+        ${waAvatar(contact, 36)}
+        <strong>${contact}</strong>
+      </div>
+      <div id="waMessages" style="flex:1;min-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:12px 2px;background:#efeae2;border-radius:12px">
+      </div>
+      <form id="waChatForm" style="display:flex;gap:8px;padding:10px 0">
+        <input id="waChatInput" placeholder="Message" autocomplete="off"
+          style="min-width:0;flex:1;border:1px solid #ddd;border-radius:22px;padding:11px;background:white;color:#222">
+        <button type="submit" style="background:#16834a;color:white;border-radius:50%;width:42px;height:42px">↑</button>
+      </form>
+    </div>`;
+
+  const list = $("waMessages");
+  messages.forEach(message => addWhatsAppBubble(list, message));
+
+  $("waChatForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const input = $("waChatInput");
+    const value = input.value.trim();
+    if (!value) return;
+
+    const message = { text: value, time: Date.now(), from: "Raka" };
+    waChats[contact] ||= [];
+    waChats[contact].push(message);
+    waSaveChats();
+    addWhatsAppBubble(list, message);
+    input.value = "";
+  });
+
+  showScreen("appScreen");
+  list.scrollTop = list.scrollHeight;
+}
+
+function addWhatsAppBubble(container, message) {
+  const bubble = document.createElement("div");
+  const mine = message.from === "Raka";
+
+  bubble.style.cssText = `
+    align-self:${mine ? "flex-end" : "flex-start"};
+    max-width:82%;padding:9px 11px;border-radius:13px;
+    background:${mine ? "#d9fdd3" : "#fff"};color:#222;
+    font-size:14px;line-height:1.4;overflow-wrap:anywhere;
+  `;
+
+  const text = document.createElement("div");
+  text.textContent = message.text;
+
+  const meta = document.createElement("div");
+  meta.textContent = waTime(message.time) + (mine ? "  ✓✓" : "");
+  meta.style.cssText = "text-align:right;font-size:10px;color:#777;margin-top:4px";
+
+  bubble.append(text, meta);
+  container.appendChild(bubble);
+  container.scrollTop = container.scrollHeight;
+}
+
+function openWhatsAppList() {
+  $("appTitle").textContent = "WhatsApp";
+  $("appContent").innerHTML = appContent.WhatsApp;
+  showScreen("appScreen");
+  renderWhatsAppHome("Chats");
+}
+
+function filterWhatsAppContacts(query) {
+  document.querySelectorAll("#waHomeContent [data-wa-contact]").forEach(button => {
+    button.style.display = button.dataset.waContact.toLowerCase().includes(
+      query.toLowerCase()
+    ) ? "flex" : "none";
+  });
+}
+
+    function addWhatsAppBubble(container, message) {
+      const bubble = document.createElement("div");
+      const time = new Date(message.time).toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      bubble.style.cssText = `
+        align-self:flex-end;max-width:82%;
+        padding:9px 11px;border-radius:14px 14px 4px 14px;
+        background:#d7f8c6;color:#222;font-size:14px;
+        line-height:1.4;overflow-wrap:anywhere;
+      `;
+
+      const text = document.createElement("div");
+      text.textContent = message.text;
+
+      const meta = document.createElement("div");
+      meta.textContent = time + "  ✓✓";
+      meta.style.cssText = "text-align:right;font-size:10px;color:#63836a;margin-top:4px";
+
+      bubble.append(text, meta);
+      container.appendChild(bubble);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function openWhatsAppList() {
+      $("appTitle").textContent = "WhatsApp";
+      $("appContent").innerHTML = appContent.WhatsApp;
+      showScreen("appScreen");
+    }
+
+    function filterWhatsAppContacts(query) {
+      const buttons = document.querySelectorAll("#waContactList .chat-row");
+      buttons.forEach(button => {
+        button.style.display = button.textContent.toLowerCase().includes(
+          query.toLowerCase()
+        ) ? "flex" : "none";
+      });
     }
 
 

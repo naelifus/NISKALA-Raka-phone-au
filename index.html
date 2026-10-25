@@ -1313,6 +1313,7 @@ if (name === "Instagram") {
       container.scrollTop = container.scrollHeight;
     }
 
+
 const igDefaultPosts = [
   {
     id: "ig1",
@@ -1322,6 +1323,7 @@ const igDefaultPosts = [
     likes: 128,
     liked: false,
     comments: [],
+    image: "https://i.pinimg.com/736x/4f/06/e7/4f06e71bfe3b34418653a0c13655cb9f.jpg",
     color: "linear-gradient(145deg,#64748b,#a8a0b9,#30394b)"
   },
   {
@@ -1332,6 +1334,7 @@ const igDefaultPosts = [
     likes: 94,
     liked: false,
     comments: [],
+    image: "https://i.pinimg.com/736x/64/a4/fa/64a4fa627011c89d17ae6330d5bcf66d.jpg",
     color: "linear-gradient(145deg,#d8b5a3,#94677c,#38344e)"
   },
   {
@@ -1342,7 +1345,74 @@ const igDefaultPosts = [
     likes: 57,
     liked: false,
     comments: [],
+    image: "https://i.pinimg.com/1200x/68/c2/7a/68c27a2193fab8a23a4439113ac17902.jpg",
     color: "linear-gradient(145deg,#263d4b,#151a2c,#5e526b)"
+  },
+  {
+    id: "ig4",
+    user: "raka.jpg",
+    location: "Malang, Indonesia",
+    caption: "a little out of focus.",
+    likes: 86,
+    liked: false,
+    comments: [],
+    image: "https://i.pinimg.com/736x/ec/3b/c2/ec3bc286da6904697cdaba837a72228e.jpg",
+    color: "linear-gradient(145deg,#526477,#b7a6b2)"
+  },
+  {
+    id: "ig5",
+    user: "raka.jpg",
+    location: "",
+    caption: "some things stay with me.",
+    likes: 112,
+    liked: false,
+    comments: [],
+    image: "https://i.pinimg.com/1200x/b9/28/c6/b928c6b4db39200a2893b395d71a60c5.jpg",
+    color: "linear-gradient(145deg,#8b777c,#353b50)"
+  },
+  {
+    id: "ig6",
+    user: "raka.jpg",
+    location: "somewhere",
+    caption: "no particular reason.",
+    likes: 73,
+    liked: false,
+    comments: [],
+    image: "https://i.pinimg.com/736x/f5/09/16/f509162abf9e6b319a89060fd4ea9ccb.jpg",
+    color: "linear-gradient(145deg,#485b68,#a6a0b5)"
+  },
+  {
+    id: "ig7",
+    user: "raka.jpg",
+    location: "",
+    caption: "wish i could pause time.",
+    likes: 149,
+    liked: false,
+    comments: [],
+    image: "https://i.pinimg.com/736x/fb/de/8b/fbde8b0e227df5f1305e7f48543a87e4.jpg",
+    color: "linear-gradient(145deg,#7b6477,#30374b)"
+  },
+  {
+    id: "ig8",
+    user: "raka.jpg",
+    location: "Malang, Indonesia",
+    caption: "just another day.",
+    likes: 91,
+    liked: false,
+    comments: [],
+    image: "https://i.pinimg.com/736x/c0/cb/df/c0cbdf87d549730de2a87004bb4a2d2a.jpg",
+    color: "linear-gradient(145deg,#64748b,#b5a3af)"
+  },
+  {
+    id: "ig9",
+    user: "raka.jpg",
+    location: "",
+    caption: "keeping this one here.",
+    likes: 105,
+    liked: false,
+    comments: [],
+    image: "https://i.pinimg.com/736x/4f/06/e7/4f06e71bfe3b34418653a0c13655cb9f.jpg",
+    color: "linear-gradient(145deg,#263d4b,#5e526b)"
   }
 ];
 
@@ -1368,9 +1438,12 @@ function renderInstagramFeed() {
         <span style="font-size:18px">•••</span>
       </div>
 
-      <div style="aspect-ratio:1/1;border-radius:5px;background:${post.color};display:grid;place-items:center;color:#ffffffb0;font-size:12px;letter-spacing:3px">
-        R A K A
-      </div>
+      
+${post.image
+  ? `<img src="${escapeIG(post.image)}" alt="Foto Instagram Raka" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:5px;display:block">`
+  : `<div style="aspect-ratio:1/1;border-radius:5px;background:${post.color};display:grid;place-items:center;color:#ffffffb0;font-size:12px;letter-spacing:3px">R A K A</div>`
+}
+
 
       <div style="display:flex;align-items:center;gap:15px;padding:10px 0 7px">
         <button onclick="toggleInstagramLike('${post.id}')" style="background:none;color:${post.liked ? "#ed4956" : "#222"};font-size:24px" aria-label="Like post">${post.liked ? "♥" : "♡"}</button>

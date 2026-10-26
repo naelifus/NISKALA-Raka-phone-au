@@ -1567,18 +1567,31 @@ textarea {
     }
 
     function pressKey(number) {
-      if (enteredCode === PASSCODE) {
-  $("passcodeError").textContent = "";
-  showScreen("homeScreen");
+  if (enteredCode.length >= 4) return;
+  enteredCode += number;
+  updateDots();
 
-  const notification = $("homeNotification");
+  if (enteredCode.length === 4) {
+    if (enteredCode === PASSCODE) {
+      $("passcodeError").textContent = "";
+      showScreen("homeScreen");
 
-  if (notification && !sessionStorage.getItem("raka-notification-shown")) {
-    setTimeout(() => {
-  notification.hidden = false;
-  sessionStorage.setItem("raka-notification-shown", "true");
-}, 2500);
-    
+      const notification = $("homeNotification");
+      if (notification && !sessionStorage.getItem("raka-notification-shown")) {
+        setTimeout(() => {
+          notification.hidden = false;
+          sessionStorage.setItem("raka-notification-shown", "true");
+        }, 2500);
+      }
+    } else {
+      $("passcodeError").textContent = "Incorrect passcode. Try again.";
+      setTimeout(() => {
+        enteredCode = "";
+        updateDots();
+      }, 550);
+    }
+  }
+}
 
     function deleteKey() {
       enteredCode = enteredCode.slice(0, -1);

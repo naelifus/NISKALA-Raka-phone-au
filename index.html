@@ -1031,6 +1031,66 @@ textarea {
 }
 
 
+    .home-notification {
+  position: absolute;
+  top: 55px;
+  left: 12px;
+  right: 12px;
+  z-index: 50;
+  animation: notificationDrop 0.35s ease-out;
+}
+
+.home-notification-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 13px;
+  text-align: left;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 18px;
+  background: rgba(45,45,50,0.88);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  font: inherit;
+  cursor: pointer;
+}
+
+.home-notification-card .notification-content {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+.home-notification-card .notification-topline {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.home-notification-card .notification-title,
+.home-notification-card .notification-preview {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.home-notification-card .notification-preview {
+  color: rgba(255,255,255,0.85);
+}
+
+@keyframes notificationDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
     
   </style>
@@ -1162,6 +1222,28 @@ textarea {
 
     <!-- HOME SCREEN -->
     <section class="screen home-screen" id="homeScreen">
+      <div id="homeNotification" class="home-notification" hidden>
+  <button
+    type="button"
+    class="home-notification-card"
+    onclick="openChat('Unknown')"
+  >
+    <span class="notification-app-icon">M</span>
+
+    <span class="notification-content">
+      <span class="notification-topline">
+        <strong>Messages</strong>
+        <span>now</span>
+      </span>
+
+      <span class="notification-title">Unknown Number</span>
+      <span class="notification-preview">
+        Raka, kamu masih di sana?
+      </span>
+    </span>
+  </button>
+</div>
+      
       <div class="welcome">
         <p class="small-date" id="homeDate">Saturday, October 24</p>
         <h1>Good afternoon.</h1>
@@ -1485,23 +1567,18 @@ textarea {
     }
 
     function pressKey(number) {
-      if (enteredCode.length >= 4) return;
-      enteredCode += number;
-      updateDots();
+      if (enteredCode === PASSCODE) {
+  $("passcodeError").textContent = "";
+  showScreen("homeScreen");
 
-      if (enteredCode.length === 4) {
-        if (enteredCode === PASSCODE) {
-          $("passcodeError").textContent = "";
-          showScreen("homeScreen");
-        } else {
-          $("passcodeError").textContent = "Incorrect passcode. Try again.";
-          setTimeout(() => {
-            enteredCode = "";
-            updateDots();
-          }, 550);
-        }
-      }
-    }
+  const notification = $("homeNotification");
+
+  if (notification && !sessionStorage.getItem("raka-notification-shown")) {
+    setTimeout(() => {
+  notification.hidden = false;
+  sessionStorage.setItem("raka-notification-shown", "true");
+}, 2500);
+    
 
     function deleteKey() {
       enteredCode = enteredCode.slice(0, -1);
@@ -1515,18 +1592,20 @@ textarea {
       });
     }
 
-    function goHome() {
-      currentApp = "";
-      showScreen("homeScreen");
-    }
+   function goHome() {
+  currentApp = "";
+  showScreen("homeScreen");
 
-    function showToast(message) {
-      const toast = $("toast");
-      toast.textContent = message;
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 1800);
-    }
+  const notification = $("homeNotification");
 
+  if (
+    notification &&
+    !notification.hidden &&
+    !sessionStorage.getItem("raka-notification-dismissed")
+  ) {
+    notification.hidden = false;
+  }
+}
     const appContent = {
       Notes: `
         <div class="app-card">

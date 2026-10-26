@@ -1129,6 +1129,30 @@ html, body { overscroll-behavior: none; }
   display: none !important;
 }
 
+
+    .app { position: relative; }
+
+.app-badge {
+  position: absolute;
+  top: -6px;
+  left: calc(50% + 8px);
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.app-badge[hidden] { display: none; }
+
+
     
   </style>
 </head>
@@ -1476,12 +1500,13 @@ html, body { overscroll-behavior: none; }
   </button>
   
 
-   <button class="app" onclick="openApp('Messages')">
-    <span class="app-icon" style="background:linear-gradient(145deg,#65e879,#20b653);color:white">●</span>
-    <span class="app-label">Messages</span>
-  </button>
+  <button class="app" onclick="openApp('Messages')">
+  <span class="app-icon" style="background:linear-gradient(145deg,#65e879,#20b653);color:white">●</span>
+  <span class="app-badge" id="messagesBadge" hidden>1</span>
+  <span class="app-label">Messages</span>
+</button>
 
-   
+  
 <button class="app" onclick="openApp('Spotify')">
   <span class="app-icon" style="background:#1ed760;color:#fff">
     <svg viewBox="0 0 32 32" width="30" height="30" fill="currentColor" aria-hidden="true">
@@ -1553,6 +1578,20 @@ html, body { overscroll-behavior: none; }
 
     const $ = id => document.getElementById(id);
 
+    function updateMessagesBadge() {
+  const badge = $("messagesBadge");
+  if (!badge) return;
+  const hasNew =
+    sessionStorage.getItem("raka-notification-shown") &&
+    !sessionStorage.getItem("raka-unknown-read");
+  badge.hidden = !hasNew;
+}
+
+function hideHomeNotification() {
+  const n = $("homeNotification");
+  if (n) n.hidden = true;
+}
+    
     function updateClock() {
       const now = new Date();
       const time = now.toLocaleTimeString("en-GB", {
@@ -1619,6 +1658,8 @@ html, body { overscroll-behavior: none; }
         setTimeout(() => {
           notification.hidden = false;
           sessionStorage.setItem("raka-notification-shown", "true");
+          updateMessagesBadge();
+          setTimeout(hideHomeNotification, 6000);
         }, 2500);
       }
     } else {
@@ -1646,6 +1687,8 @@ html, body { overscroll-behavior: none; }
    function goHome() {
   currentApp = "";
   showScreen("homeScreen");
+     updateMessagesBadge();
+   }
 
   const notification = $("homeNotification");
 
@@ -1937,7 +1980,13 @@ if (waNav) {
     const chats = JSON.parse(localStorage.getItem("raka-chats") || "{}");
 
   function openChat(contact) {
-  if (contact === "Unknown" && !chats["Unknown"]?.length) {
+    if (contact === "Unknown") {
+  sessionStorage.setItem("raka-unknown-read", "true");
+  hideHomeNotification();
+  updateMessagesBadge();
+}
+    
+if (contact === "Unknown" && !chats["Unknown"]?.length) {
     chats["Unknown"] = [
       { text: "Raka, kamu masih di sana?", time: Date.now(), sender: "Unknown" }
     ];
@@ -1974,6 +2023,11 @@ if (waNav) {
         const message = { text: value, time: Date.now() };
         chats[contact] ||= [];
         chats[contact].push(message);
+        
+        if (contact === "Unknown") {
+  sessionStorage.setItem("raka-unknown-read", "true");
+  updateMessagesBadge();
+}
         localStorage.setItem("raka-chats", JSON.stringify(chats));
 
         addChatBubble(list, message);
@@ -2649,6 +2703,7 @@ const lastB = $("lastMessageBestFriend");
 if (lastB && chats["Best Friend"]?.length) {
   lastB.textContent = chats["Best Friend"][chats["Best Friend"].length - 1].text;
 }
+    updateMessagesBadge();
   </script>
 </body>
 </html>

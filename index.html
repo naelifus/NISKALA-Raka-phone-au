@@ -1090,7 +1090,40 @@ textarea {
     opacity: 1;
     transform: translateY(0);
   }
+
+
+
 }
+html, body { overscroll-behavior: none; }
+
+#lockScreen,
+#lockScreen * { touch-action: none; }
+
+.swipe-hint {
+  width: 150px;
+  height: 32px;
+  bottom: 0;
+  background: transparent;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.swipe-hint::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 8px;
+  height: 4px;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.phone:has(#appScreen.active) .swipe-hint::after {
+  background: #222;
+}
+
 
     
   </style>
@@ -2536,137 +2569,76 @@ function openInstagramDM() {
     }
 
     
-  // Swipe up to unlock or return home.
-  let touchStartY = 0;
-  let touchCurrentY = 0;
-  let isSwiping = false;
+// ===== SWIPE (mouse + touch) =====
+let swipeStartY = 0;
+let swipeDist = 0;
+let swipeTarget = null;
+let swiping = false;
 
-  $("phone").addEventListener("touchstart", event => {
-    touchStartY = event.touches[0].clientY;
-    touchCurrentY = touchStartY;
-    isSwiping = $("lockScreen").classList.contains("active");
+function activeScreenName() {
+  if ($("lockScreen").classList.contains("active")) return "lock";
+  if ($("appScreen").classList.contains("active")) return "app";
+  return null;
+}
 
-    if (isSwiping) {
-      $("lockScreen").style.transition = "none";
-    }
-  }, { passive: true });
+$("phone").addEventListener("pointerdown", e => {
+  if (e.target.closest("button, input, textarea, select, a")) return;
 
-  $("phone").addEventListener("touchmove", event => {
-    if (!isSwiping || !$("lockScreen").classList.contains("active")) return;
+  const target = activeScreenName();
+  if (!target) return;
+  // di dalam aplikasi, swipe hanya dihitung dari garis home di bawah
+  if (target === "app" && !e.target.closest("#homeIndicator")) return;
 
-    touchCurrentY = event.touches[0].clientY;
-    const distance = Math.min(0, touchCurrentY - touchStartY);
+  swipeTarget = target;
+  swipeStartY = e.clientY;
+  swipeDist = 0;
+  swiping = true;
+  $("phone").setPointerCapture(e.pointerId);
 
-    $("lockScreen").style.transform = `translateY(${distance * 0.65}px)`;
-  }, { passive: true });
+  if (target === "lock") $("lockScreen").style.transition = "none";
+});
 
-  $("phone").addEventListener("touchend", event => {
-    const touchEndY = event.changedTouches[0].clientY;
-    const swipeDistance = touchStartY - touchEndY;
-    const swipeUp = swipeDistance > 45;
+$("phone").addEventListener("pointermove", e => {
+  if (!swiping) return;
+  swipeDist = swipeStartY - e.clientY;
 
-    if (isSwiping && $("lockScreen").classList.contains("active")) {
-      $("lockScreen").style.transition = "";
-      $("lockScreen").style.transform = "";
+  if (swipeTarget === "lock") {
+    $("lockScreen").style.transform =
+      `translateY(${Math.min(0, -swipeDist) * 0.65}px)`;
+  }
+});
 
-      if (swipeUp) {
-        unlock();
-      }
+function endSwipe() {
+  if (!swiping) return;
+  swiping = false;
 
-      isSwiping = false;
-      return;
-    }
+  const target = swipeTarget;
+  const up = swipeDist > 45;
+  const tap = Math.abs(swipeDist) < 8;
+  swipeTarget = null;
 
-    if (!swipeUp) return;
+  if (target === "lock") {
+    $("lockScreen").style.transition = "";
+    $("lockScreen").style.transform = "";
+    if (up || tap) unlock();
+  } else if (target === "app" && (up || tap)) {
+    goHome();
+  }
+}
 
-    if ($("homeScreen").classList.contains("active")) {
-      // Already on home screen.
-    } else if ($("appScreen").classList.contains("active")) {
-      goHome();
-    }
-  }, { passive: true });
-
-  // Clicking the lock screen also opens the passcode screen.
-  $("lockScreen").addEventListener("click", event => {
-    if (event.target.closest("button")) return;
-    if (isSwiping) return;
-    unlock();
-  });
-    
-  // Mouse swipe up to unlock or return home on laptop.
-  let mouseStartY = 0;
-  let mouseCurrentY = 0;
-  let isMouseSwiping = false;
-  let mouseSwipeTarget = null;
-
-  $("phone").addEventListener("mousedown", event => {
-    // Jangan ganggu tombol, ikon, atau kontrol interaktif.
-    if (event.target.closest("button, input, textarea, select, a")) {
-      return;
-    }
-    
-
-    mouseStartY = event.clientY;
-    mouseCurrentY = mouseStartY;
-    mouseSwipeTarget = null;
-    isMouseSwiping = true;
-
-    if ($("lockScreen").classList.contains("active")) {
-      mouseSwipeTarget = "lock";
-      $("lockScreen").style.transition = "none";
-    } else if ($("appScreen").classList.contains("active")) {
-      mouseSwipeTarget = "app";
-    } else if ($("homeScreen").classList.contains("active")) {
-      mouseSwipeTarget = "home";
-    }
-  });
-
-  document.addEventListener("mousemove", event => {
-    if (!isMouseSwiping) return;
-
-    mouseCurrentY = event.clientY;
-    const distance = Math.min(0, mouseCurrentY - mouseStartY);
-
-    if (
-      mouseSwipeTarget === "lock" &&
-      $("lockScreen").classList.contains("active")
-    ) {
-      $("lockScreen").style.transform = `translateY(${distance * 0.65}px)`;
-    }
-  });
-
-  document.addEventListener("mouseup", () => {
-    if (!isMouseSwiping) return;
-
-    const swipeDistance = mouseStartY - mouseCurrentY;
-    const swipeUp = swipeDistance > 45;
-
-    if (mouseSwipeTarget === "lock") {
-      $("lockScreen").style.transition = "";
-      $("lockScreen").style.transform = "";
-
-      if (swipeUp && $("lockScreen").classList.contains("active")) {
-        unlock();
-      }
-    } else if (swipeUp && mouseSwipeTarget === "app") {
-      goHome();
-    }
-
-    isMouseSwiping = false;
-    mouseSwipeTarget = null;
-  });
-
+$("phone").addEventListener("pointerup", endSwipe);
+$("phone").addEventListener("pointercancel", endSwipe);
 
 
     // Initialize message previews from saved chats.
-    if (chats.Unknown?.length) {
-      $("lastMessageUnknown").textContent =
-        chats.Unknown[chats.Unknown.length - 1].text;
-    }
-    if (chats["Best Friend"]?.length) {
-      $("lastMessageBestFriend").textContent =
-        chats["Best Friend"][chats["Best Friend"].length - 1].text;
-    }
+    const lastU = $("lastMessageUnknown");
+if (lastU && chats.Unknown?.length) {
+  lastU.textContent = chats.Unknown[chats.Unknown.length - 1].text;
+}
+const lastB = $("lastMessageBestFriend");
+if (lastB && chats["Best Friend"]?.length) {
+  lastB.textContent = chats["Best Friend"][chats["Best Friend"].length - 1].text;
+}
   </script>
 </body>
 </html>

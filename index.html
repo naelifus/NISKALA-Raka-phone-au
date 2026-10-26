@@ -1690,17 +1690,7 @@ function hideHomeNotification() {
      updateMessagesBadge();
    }
 
-  const notification = $("homeNotification");
-
-  if (
-    notification &&
-    !notification.hidden &&
-    !sessionStorage.getItem("raka-notification-dismissed")
-  ) {
-    notification.hidden = false;
-  }
-}
-    const appContent = {
+   const appContent = {
       Notes: `
         <div class="app-card">
           <p>NOTES · ICLOUD</p>

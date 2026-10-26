@@ -833,24 +833,23 @@
     
 
 /* WhatsApp iPhone-style layout */
-.app-screen.wa-compact .app-topbar {
-  min-height: 72px;
-  padding: 42px 16px 8px;
-  gap: 8px;
+    
+.app-screen.wa-compact .app-content {
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  width: 100%;
+  padding: 10px 14px 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .app-screen.wa-compact .app-topbar h2 {
   font-size: 22px;
   letter-spacing: -0.4px;
   line-height: 1.2;
-}
-
-.app-screen.wa-compact .app-content {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 10px 14px 16px;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
 }
 
 .app-screen.wa-compact #appContent {
@@ -863,6 +862,64 @@
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
+}
+
+.wa-bottom-nav {
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 7px 2px calc(7px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid #e9edef;
+  background: #fefefe;
+}
+
+.wa-bottom-nav button {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: #667781;
+  font-size: 10px;
+}
+
+.wa-bottom-nav .wa-nav-icon {
+  font-size: 20px;
+  line-height: 22px;
+}
+
+.wa-bottom-nav button.active {
+  color: #008f78;
+  font-weight: 600;
+}
+
+.app-screen.wa-compact {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+    .app-screen.wa-compact #appContent.wa-chat-open {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-screen.wa-compact #appContent.wa-chat-open > div {
+  flex: 1;
+  min-height: 0;
+}
+
+.app-screen.wa-compact #appContent.wa-chat-open form {
+  flex-shrink: 0;
 }
 
     
@@ -1182,15 +1239,37 @@
 </section>
 
 <!-- APP WINDOW -->
-<section class="screen app-screen" id="appScreen">
-      <header class="app-topbar">
-        <button class="back-button" onclick="goHome()">‹ Home</button>
-        <h2 id="appTitle">Notes</h2>
-        <span style="width:40px"></span>
-      </header>
-      <div class="app-content" id="appContent"></div>
-    </section>
 
+<section class="screen app-screen" id="appScreen">
+  <header class="app-topbar">
+    <button class="back-button" onclick="goHome()">‹ Home</button>
+    <h2 id="appTitle">Notes</h2>
+    <span style="width:40px"></span>
+  </header>
+
+  <div class="app-content" id="appContent"></div>
+
+  <nav id="waBottomNav" class="wa-bottom-nav" style="display:none">
+    <button onclick="renderWhatsAppHome('Chats')" data-wa-tab="Chats">
+      <span class="wa-nav-icon">◉</span>
+      <span>Chats</span>
+    </button>
+    <button onclick="renderWhatsAppHome('Updates')" data-wa-tab="Updates">
+      <span class="wa-nav-icon">◉</span>
+      <span>Updates</span>
+    </button>
+    <button onclick="renderWhatsAppHome('Communities')" data-wa-tab="Communities">
+      <span class="wa-nav-icon">♧</span>
+      <span>Communities</span>
+    </button>
+    <button onclick="renderWhatsAppHome('Calls')" data-wa-tab="Calls">
+      <span class="wa-nav-icon">☎</span>
+      <span>Calls</span>
+    </button>
+  </nav>
+</section>
+
+    
     <!-- INCOMING CALL -->
     <section class="screen call-screen" id="callScreen">
       <div class="call-avatar">R</div>
@@ -1475,14 +1554,6 @@ WhatsApp: `
       oninput="filterWhatsAppContacts(this.value)"
       style="box-sizing:border-box;width:100%;padding:10px 12px;border:0;border-radius:10px;background:#ededf0;font-size:13px;margin-bottom:12px;outline:none"
 
-   
-<div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:12px">
-  <button onclick="renderWhatsAppHome('Chats')" style="flex-shrink:0;border:0;border-radius:16px;padding:7px 12px;background:#d9fdd3;color:#176b36;font-size:12px">Chats</button>
-  <button onclick="renderWhatsAppHome('Updates')" style="flex-shrink:0;border:0;border-radius:16px;padding:7px 12px;background:#f0f0f0;color:#333;font-size:12px">Updates</button>
-  <button onclick="renderWhatsAppHome('Communities')" style="flex-shrink:0;border:0;border-radius:16px;padding:7px 12px;background:#f0f0f0;color:#333;font-size:12px">Communities</button>
-  <button onclick="renderWhatsAppHome('Calls')" style="flex-shrink:0;border:0;border-radius:16px;padding:7px 12px;background:#f0f0f0;color:#333;font-size:12px">Calls</button>
-</div>
-
 
     <div id="waHomeContent">
       <div style="padding:12px;color:#777;font-size:13px">Your chats will appear here.</div>
@@ -1518,8 +1589,15 @@ WhatsApp: `
 function openApp(name) {
   currentApp = name;
 
-  const screen = $("appScreen");
-  screen.classList.toggle("wa-compact", name === "WhatsApp");
+  
+const screen = $("appScreen");
+screen.classList.toggle("wa-compact", name === "WhatsApp");
+
+const waNav = $("waBottomNav");
+if (waNav) {
+  waNav.style.display = name === "WhatsApp" ? "flex" : "none";
+}
+
 
   $("appTitle").textContent = name;
   $("appContent").innerHTML =
@@ -1684,6 +1762,11 @@ function waAvatar(contact, size = 42) {
 
 function renderWhatsAppHome(tab = "Chats") {
   $("appTitle").textContent = "WhatsApp";
+  
+  document.querySelectorAll("#waBottomNav button").forEach(button => {
+    const active = button.dataset.waTab === tab;
+    button.classList.toggle("active", active);
+  });
 
   const area = $("waHomeContent");
   if (!area) return;
@@ -1776,17 +1859,22 @@ if (tab === "Updates") {
 }
 
 function openWhatsAppChat(contact) {
+  const waNav = $("waBottomNav");
+  if (waNav) waNav.style.display = "none";
+
   const messages = waChats[contact] || [];
   $("appTitle").textContent = contact;
 
-  $("appContent").innerHTML = `
-    <div style="display:flex;flex-direction:column;height:100%;min-height:350px">
+ $("appContent").classList.add("wa-chat-open");
+
+$("appContent").innerHTML = `
+    <div style="display:flex;flex-direction:column;height:100%;min-height:0">
       <div style="display:flex;align-items:center;gap:8px;padding-bottom:10px">
         <button onclick="openWhatsAppList()" style="background:transparent;color:#16834a;font-size:15px">‹ Chats</button>
         ${waAvatar(contact, 36)}
         <strong>${contact}</strong>
       </div>
-      <div id="waMessages" style="flex:1;min-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:12px 2px;background:#efeae2;border-radius:12px">
+      <div id="waMessages" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:12px 2px;background:#efeae2;border-radius:12px">
       </div>
       <form id="waChatForm" style="display:flex;gap:8px;padding:10px 0">
         <input id="waChatInput" placeholder="Message" autocomplete="off"
@@ -1840,12 +1928,18 @@ function addWhatsAppBubble(container, message) {
 }
 
 function openWhatsAppList() {
+  $("appContent").classList.remove("wa-chat-open");
+
   $("appTitle").textContent = "WhatsApp";
   $("appContent").innerHTML = appContent.WhatsApp;
+
+  const waNav = $("waBottomNav");
+  if (waNav) waNav.style.display = "flex";
+
   showScreen("appScreen");
   renderWhatsAppHome("Chats");
 }
-
+    
 function filterWhatsAppContacts(query) {
   document.querySelectorAll("#waHomeContent [data-wa-contact]").forEach(button => {
     button.style.display = button.dataset.waContact.toLowerCase().includes(
@@ -1853,47 +1947,6 @@ function filterWhatsAppContacts(query) {
     ) ? "flex" : "none";
   });
 }
-
-    function addWhatsAppBubble(container, message) {
-      const bubble = document.createElement("div");
-      const time = new Date(message.time).toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-
-      bubble.style.cssText = `
-        align-self:flex-end;max-width:82%;
-        padding:9px 11px;border-radius:14px 14px 4px 14px;
-        background:#d7f8c6;color:#222;font-size:14px;
-        line-height:1.4;overflow-wrap:anywhere;
-      `;
-
-      const text = document.createElement("div");
-      text.textContent = message.text;
-
-      const meta = document.createElement("div");
-      meta.textContent = time + "  ✓✓";
-      meta.style.cssText = "text-align:right;font-size:10px;color:#63836a;margin-top:4px";
-
-      bubble.append(text, meta);
-      container.appendChild(bubble);
-      container.scrollTop = container.scrollHeight;
-    }
-
-    function openWhatsAppList() {
-      $("appTitle").textContent = "WhatsApp";
-      $("appContent").innerHTML = appContent.WhatsApp;
-      showScreen("appScreen");
-    }
-
-    function filterWhatsAppContacts(query) {
-      const buttons = document.querySelectorAll("#waContactList .chat-row");
-      buttons.forEach(button => {
-        button.style.display = button.textContent.toLowerCase().includes(
-          query.toLowerCase()
-        ) ? "flex" : "none";
-      });
-    }
 
 
 const igDefaultPosts = [

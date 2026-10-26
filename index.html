@@ -1901,8 +1901,9 @@ if (waNav) {
     function openChat(contact) {
       if (contact === "Unknown" && !chats["Unknown"]?.length) {
   chats["Unknown"] = [
-    { text: "Raka, kamu masih di sana?", time: Date.now() }
-  ];
+   chats["Unknown"] = [
+  { text: "Raka, kamu masih di sana?", time: Date.now(), sender: "Unknown" }
+];
 
   localStorage.setItem("raka-chats", JSON.stringify(chats));
 }

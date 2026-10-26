@@ -923,6 +923,29 @@
 }
 
     
+/* Prevent text selection while dragging the phone screen */
+#phone {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#lockScreen {
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+#lockScreen:active {
+  cursor: grabbing;
+}
+
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+
+  
   </style>
 </head>
 
@@ -2350,6 +2373,8 @@ function openInstagramDM() {
     if (event.target.closest("button, input, textarea, select, a")) {
       return;
     }
+    
+    event.preventDefault();
 
     mouseStartY = event.clientY;
     mouseCurrentY = mouseStartY;

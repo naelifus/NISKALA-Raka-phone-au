@@ -2723,7 +2723,8 @@ $("phone").addEventListener("pointercancel", endSwipe);
 
 
     // Initialize message previews from saved chats.
-    const lastU = $("lastMessageUnknown");
+    
+const lastU = $("lastMessageUnknown");
 if (lastU && chats.Unknown?.length) {
   lastU.textContent = chats.Unknown[chats.Unknown.length - 1].text;
 }
@@ -2733,14 +2734,16 @@ if (lastB && chats["Best Friend"]?.length) {
 }
     updateMessagesBadge();
 
-    function fitPhone() {
-  const s = Math.min(1, (innerHeight - 24) / 844, (innerWidth - 8) / 390);
-  document.documentElement.style.setProperty("--s", s);
-}
-fitPhone();
-addEventListener("resize", fitPhone);
     
+   </script>
+  
+  <script>
+    function fitPhone() {
+      const s = Math.min(1, (innerHeight - 24) / 844, (innerWidth - 8) / 390);
+      document.documentElement.style.setProperty("--s", s);
+    }
+    fitPhone();
+    addEventListener("resize", fitPhone);
   </script>
 </body>
 </html>
-

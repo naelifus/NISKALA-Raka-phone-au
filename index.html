@@ -1853,19 +1853,31 @@ const messages = chats[contact] || [];
       $("appContent").scrollTop = 0;
     }
 
-    function addChatBubble(container, message) {
-      const bubble = document.createElement("div");
-      bubble.textContent = message.text;
-      bubble.style.cssText = `
-        align-self:flex-end;max-width:82%;padding:10px 13px;
-        border-radius:17px 17px 4px 17px;background:#087df5;
-        color:white;font-size:14px;line-height:1.4;overflow-wrap:anywhere;
-      `;
-      container.appendChild(bubble);
-      container.scrollTop = container.scrollHeight;
-    }
-    
-    
+   
+function addChatBubble(container, message) {
+  const bubble = document.createElement("div");
+  bubble.textContent = message.text;
+
+  const isIncoming = message.sender === "Unknown";
+
+  bubble.style.cssText = `
+    align-self:${isIncoming ? "flex-start" : "flex-end"};
+    max-width:82%;
+    padding:10px 13px;
+    border-radius:${isIncoming
+      ? "17px 17px 17px 4px"
+      : "17px 17px 4px 17px"};
+    background:${isIncoming ? "#e5e5ea" : "#087df5"};
+    color:${isIncoming ? "#111" : "white"};
+    font-size:14px;
+    line-height:1.4;
+    overflow-wrap:anywhere;
+  `;
+
+  container.appendChild(bubble);
+  container.scrollTop = container.scrollHeight;
+}
+
     const waDefaultContacts = [
       "Raras", "Arya", "Diajeng", "Anindya",
       "Sekar", "Rangga", "Rakha", "Komponen 8 Group"
@@ -1884,7 +1896,7 @@ const waContacts = [
   { name: "Sekar", initials: "S", color: "#86a99b", preview: "aku kirim fotonya nanti" },
   { name: "Rangga", initials: "R", color: "#8196a8", preview: "otw bentar" },
   { name: "Rakha", initials: "R", color: "#b4a080", preview: "sip, aman" },
-  { name: "Niskala Group", initials: "N", color: "#7e9c85", preview: "Raras: pada ke mana?" }
+  { name: "8 Komponen Group", initials: "8", color: "#7e9c85", preview: "Raras: pada ke mana?" }
 ];
 
 function waSaveChats() {

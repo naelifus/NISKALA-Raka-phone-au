@@ -1931,12 +1931,18 @@ if (waNav) {
 
     const chats = JSON.parse(localStorage.getItem("raka-chats") || "{}");
 
-   function openChat(contact) {
+  function openChat(contact) {
   if (contact === "Unknown" && !chats["Unknown"]?.length) {
     chats["Unknown"] = [
       { text: "Raka, kamu masih di sana?", time: Date.now(), sender: "Unknown" }
     ];
 
+    localStorage.setItem("raka-chats", JSON.stringify(chats));
+  }
+
+  // Perbaiki pesan lama Unknown yang belum punya sender
+  if (contact === "Unknown" && chats["Unknown"]?.[0] && !chats["Unknown"][0].sender) {
+    chats["Unknown"][0].sender = "Unknown";
     localStorage.setItem("raka-chats", JSON.stringify(chats));
   }
 

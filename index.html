@@ -1712,12 +1712,12 @@ if (wd) wd.textContent = now.toLocaleDateString("en-US", { weekday: "short" }).t
       setTimeout(() => {
         enteredCode = "";
         updateDots();
-      }, 550);
+           }, 550);
     }
   }
 }
 
-    function deleteKey() {
+        function deleteKey() {
       enteredCode = enteredCode.slice(0, -1);
       $("passcodeError").textContent = "";
       updateDots();
@@ -1729,13 +1729,13 @@ if (wd) wd.textContent = now.toLocaleDateString("en-US", { weekday: "short" }).t
       });
     }
 
-   function goHome() {
-  currentApp = "";
-  showScreen("homeScreen");
-     updateMessagesBadge();
-   }
+    function goHome() {
+      currentApp = "";
+      showScreen("homeScreen");
+      updateMessagesBadge();
+    }
 
-   const appContent = {
+    const appContent = {
       Notes: `
         <div class="app-card">
           <p>NOTES · ICLOUD</p>

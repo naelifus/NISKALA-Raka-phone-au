@@ -1088,21 +1088,34 @@ textarea {
 <div class="lock-notifications" id="lockNotifications">
   <div class="notification-heading">NOTIFICATION CENTER</div>
 
-  <div class="notification-card">
-    <div class="notification-app-icon">M</div>
+  
+<button
+  class="notification-card"
+  type="button"
+  onclick="openApp('Messages')"
+  aria-label="Open Messages from Unknown Number"
+  style="
+    width:100%;
+    text-align:left;
+    color:inherit;
+    font:inherit;
+    cursor:pointer;
+  "
+>
+  <div class="notification-app-icon">M</div>
 
-    <div class="notification-content">
-      <div class="notification-topline">
-        <strong>Messages</strong>
-        <span>now</span>
-      </div>
+  <div class="notification-content">
+    <div class="notification-topline">
+      <strong>Messages</strong>
+      <span>now</span>
+    </div>
 
-      <div class="notification-title">Unknown Number</div>
-      <div class="notification-preview">
-        Raka, kamu masih di sana?
-      </div>
+    <div class="notification-title">Unknown Number</div>
+    <div class="notification-preview">
+      Raka, kamu masih di sana?
     </div>
   </div>
+</button>
 
   <p class="lock-swipe-hint">Swipe up to open</p>
 </div>

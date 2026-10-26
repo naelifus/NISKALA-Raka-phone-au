@@ -2338,6 +2338,69 @@ function openInstagramDM() {
     if (isSwiping) return;
     unlock();
   });
+    
+  // Mouse swipe up to unlock or return home on laptop.
+  let mouseStartY = 0;
+  let mouseCurrentY = 0;
+  let isMouseSwiping = false;
+  let mouseSwipeTarget = null;
+
+  $("phone").addEventListener("mousedown", event => {
+    // Jangan ganggu tombol, ikon, atau kontrol interaktif.
+    if (event.target.closest("button, input, textarea, select, a")) {
+      return;
+    }
+
+    mouseStartY = event.clientY;
+    mouseCurrentY = mouseStartY;
+    mouseSwipeTarget = null;
+    isMouseSwiping = true;
+
+    if ($("lockScreen").classList.contains("active")) {
+      mouseSwipeTarget = "lock";
+      $("lockScreen").style.transition = "none";
+    } else if ($("appScreen").classList.contains("active")) {
+      mouseSwipeTarget = "app";
+    } else if ($("homeScreen").classList.contains("active")) {
+      mouseSwipeTarget = "home";
+    }
+  });
+
+  document.addEventListener("mousemove", event => {
+    if (!isMouseSwiping) return;
+
+    mouseCurrentY = event.clientY;
+    const distance = Math.min(0, mouseCurrentY - mouseStartY);
+
+    if (
+      mouseSwipeTarget === "lock" &&
+      $("lockScreen").classList.contains("active")
+    ) {
+      $("lockScreen").style.transform = `translateY(${distance * 0.65}px)`;
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (!isMouseSwiping) return;
+
+    const swipeDistance = mouseStartY - mouseCurrentY;
+    const swipeUp = swipeDistance > 45;
+
+    if (mouseSwipeTarget === "lock") {
+      $("lockScreen").style.transition = "";
+      $("lockScreen").style.transform = "";
+
+      if (swipeUp && $("lockScreen").classList.contains("active")) {
+        unlock();
+      }
+    } else if (swipeUp && mouseSwipeTarget === "app") {
+      goHome();
+    }
+
+    isMouseSwiping = false;
+    mouseSwipeTarget = null;
+  });
+
 
 
     // Initialize message previews from saved chats.

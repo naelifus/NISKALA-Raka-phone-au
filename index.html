@@ -1714,48 +1714,38 @@ function renderWhatsAppHome(tab = "Chats") {
 
   
 
+
 if (tab === "Updates") {
   area.innerHTML = `
-    <div style="width:100%;box-sizing:border-box;color:#111">
-      <h3 style="font-size:22px;font-weight:700;letter-spacing:-.4px;margin:4px 0 18px">
-        Updates
-      </h3>
+    <h3 style="margin:12px 0 6px">Updates</h3>
+    <p style="font-size:13px;color:#777;margin:0 0 16px">Status</p>
 
-      <h4 style="font-size:16px;font-weight:600;margin:0 0 12px">
-        Status
-      </h4>
+    <button onclick="showToast('Pilih foto atau video untuk status Raka')"
+      style="display:flex;align-items:center;gap:12px;width:100%;padding:12px 0;background:transparent;color:inherit;text-align:left">
+      <span style="position:relative">
+        <span style="display:flex;width:42px;height:42px;border-radius:50%;background:#6b879e;color:white;align-items:center;justify-content:center;font-size:16px">R</span>
+        <span style="position:absolute;right:-2px;bottom:-2px;width:18px;height:18px;border:2px solid white;border-radius:50%;background:#25a55b;color:white;display:flex;align-items:center;justify-content:center;font-size:14px">+</span>
+      </span>
+      <span>
+        <strong>Tambah status</strong>
+        <span style="display:block;color:#777;font-size:12px;margin-top:5px">Bagikan pembaruan dengan teman-teman</span>
+      </span>
+    </button>
 
-      <button onclick="showToast('Pilih foto atau video untuk status Raka')"
-        style="display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;padding:8px 0;border:0;background:transparent;color:inherit;text-align:left">
-        <span style="position:relative;display:block;flex-shrink:0">
-          <span style="display:flex;width:48px;height:48px;border-radius:50%;background:#6b879e;color:white;align-items:center;justify-content:center;font-size:19px">R</span>
-          <span style="position:absolute;right:-2px;bottom:-2px;width:20px;height:20px;border:2px solid #fff;border-radius:50%;background:#25d366;color:white;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500">+</span>
+    <h4 style="font-size:13px;color:#777;margin:22px 0 8px">RECENT UPDATES</h4>
+
+    ${waContacts.filter(c => c.name !== "Niskala Group").map(c => `
+      <button onclick="showToast('${c.name} belum membuat status baru')"
+        style="display:flex;align-items:center;gap:12px;width:100%;padding:10px 0;background:transparent;color:inherit;text-align:left">
+        <span style="padding:3px;border:2px solid #25a55b;border-radius:50%">
+          ${waAvatar(c.name, 44)}
         </span>
-        <span style="flex:1;min-width:0">
-          <strong style="display:block;font-size:14px;font-weight:600">My status</strong>
-          <span style="display:block;font-size:12px;color:#667781;margin-top:4px">Tap to add status update</span>
+        <span>
+          <strong>${c.name}</strong>
+          <span style="display:block;color:#777;font-size:12px;margin-top:4px">Tap to view status</span>
         </span>
       </button>
-
-      <div style="height:1px;background:#e9edef;margin:12px 0"></div>
-
-      <h4 style="font-size:14px;color:#667781;font-weight:600;margin:0 0 10px">
-        RECENT UPDATES
-      </h4>
-
-      ${waContacts.filter(c => c.name !== "Niskala Group").map(c => `
-        <button onclick="showToast('${c.name} belum membuat status baru')"
-          style="display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;padding:8px 0;border:0;background:transparent;color:inherit;text-align:left">
-          <span style="display:flex;align-items:center;justify-content:center;flex-shrink:0;width:52px;height:52px;border:2px solid #25d366;border-radius:50%;box-sizing:border-box;padding:3px">
-            ${waAvatar(c.name, 42)}
-          </span>
-          <span style="flex:1;min-width:0">
-            <strong style="display:block;font-size:14px;font-weight:600">${c.name}</strong>
-            <span style="display:block;font-size:12px;color:#667781;margin-top:4px">Today</span>
-          </span>
-        </button>
-      `).join("")}
-    </div>
+    `).join("")}
   `;
   return;
 }

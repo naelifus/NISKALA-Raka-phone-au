@@ -1772,6 +1772,7 @@ function renderWhatsAppHome(tab = "Chats") {
   const area = $("waHomeContent");
   if (!area) return;
 
+  
   if (tab === "Chats") {
     area.innerHTML = waContacts.map(contact => {
       const messages = waChats[contact.name] || [];
@@ -1780,24 +1781,63 @@ function renderWhatsAppHome(tab = "Chats") {
       const time = last ? waTime(last.time) : "";
 
       return `
-        <button class="chat-row" data-wa-contact="${contact.name}"
+        <button
+          class="chat-row"
+          data-wa-contact="${contact.name}"
           onclick="openWhatsAppChat('${contact.name}')"
-          style="display:flex;align-items:center;gap:10px;width:100%;padding:7px 0;border:0;background:transparent;text-align:left;color:inherit"
-          ${waAvatar(contact.name)}
-          <span style="min-width:0;flex:1;border-bottom:1px solid #ededed;padding:3px 0 12px">
-            <span style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-              <strong style="font-size:14px;font-weight:600">${contact.name}</strong>
-              <span style="font-size:11px;color:#777">${time}</span>
+          style="
+            display:flex;
+            align-items:center;
+            gap:11px;
+            width:100%;
+            padding:10px 0;
+            border:0;
+            background:transparent;
+            text-align:left;
+            color:inherit;
+          "
+        >
+          ${waAvatar(contact.name, 46)}
+
+          <span style="
+            display:block;
+            min-width:0;
+            flex:1;
+            border-bottom:1px solid #ededed;
+            padding:3px 0 12px;
+          ">
+            <span style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              gap:8px;
+            ">
+              <strong style="font-size:14px;font-weight:600">
+                ${contact.name}
+              </strong>
+              <span style="font-size:11px;color:#777;flex-shrink:0">
+                ${time}
+              </span>
             </span>
-            <span style="display:block;color:#777;font-size:12px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</span>
+
+            <span style="
+              display:block;
+              color:#777;
+              font-size:12px;
+              margin-top:4px;
+              overflow:hidden;
+              text-overflow:ellipsis;
+              white-space:nowrap;
+            ">${preview}</span>
           </span>
-        </button>`;
+        </button>
+      `;
     }).join("");
+
     return;
   }
 
   
-
 
 if (tab === "Updates") {
   area.innerHTML = `

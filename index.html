@@ -831,19 +831,30 @@
       }
     }
     
-    /* WhatsApp: compact iPhone-style layout */
+
+/* WhatsApp iPhone-style layout */
 .app-screen.wa-compact .app-topbar {
-  min-height: 76px;
-  padding: 42px 14px 10px;
+  min-height: 72px;
+  padding: 42px 16px 8px;
+  gap: 8px;
 }
 
 .app-screen.wa-compact .app-topbar h2 {
   font-size: 22px;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
 }
 
 .app-screen.wa-compact .app-content {
-  padding: 12px;
+  padding: 10px 14px 16px;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
+
+.app-screen.wa-compact #appContent {
+  font-size: 14px;
+}
+
     
   </style>
 </head>
@@ -1444,7 +1455,7 @@
 WhatsApp: `
   <div style="font-family:Arial,sans-serif;color:#111;padding:4px 0 12px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <h2 style="font-size:30px;margin:0;letter-spacing:-1px">WhatsApp</h2>
+      <h2 style="font-size:25px;margin:0;letter-spacing:-0.5px;font-weight:600">WhatsApp</h2>
       <button onclick="showToast('New chat')" style="background:none;color:#16834a;font-size:25px">＋</button>
     </div>
 
@@ -1452,15 +1463,16 @@ WhatsApp: `
       type="search"
       placeholder="Ask Meta AI or Search"
       oninput="filterWhatsAppContacts(this.value)"
-      style="box-sizing:border-box;width:100%;padding:12px 14px;border:0;border-radius:12px;background:#ededf0;font-size:14px;margin-bottom:16px"
-    >
+      style="box-sizing:border-box;width:100%;padding:10px 12px;border:0;border-radius:10px;background:#ededf0;font-size:13px;margin-bottom:12px;outline:none"
 
-    <div style="display:flex;gap:8px;overflow-x:auto;margin-bottom:18px">
-      <button onclick="renderWhatsAppHome('Chats')" style="border:0;border-radius:18px;padding:9px 15px;background:#d9fdd3;color:#176b36">Chats</button>
-      <button onclick="renderWhatsAppHome('Updates')" style="border:0;border-radius:18px;padding:9px 15px;background:#f0f0f0;color:#333">Updates</button>
-      <button onclick="renderWhatsAppHome('Communities')" style="border:0;border-radius:18px;padding:9px 15px;background:#f0f0f0;color:#333">Communities</button>
-      <button onclick="renderWhatsAppHome('Calls')" style="border:0;border-radius:18px;padding:9px 15px;background:#f0f0f0;color:#333">Calls</button>
-    </div>
+   
+<div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:12px">
+  <button onclick="renderWhatsAppHome('Chats')" style="flex-shrink:0;border:0;border-radius:16px;padding:7px 12px;background:#d9fdd3;color:#176b36;font-size:12px">Chats</button>
+  <button onclick="renderWhatsAppHome('Updates')" style="flex-shrink:0;border:0;border-radius:16px;padding:7px 12px;background:#f0f0f0;color:#333;font-size:12px">Updates</button>
+  <button onclick="renderWhatsAppHome('Communities')" style="flex-shrink:0;border:0;border-radius:16px;padding:7px 12px;background:#f0f0f0;color:#333;font-size:12px">Communities</button>
+  <button onclick="renderWhatsAppHome('Calls')" style="flex-shrink:0;border:0;border-radius:16px;padding:7px 12px;background:#f0f0f0;color:#333;font-size:12px">Calls</button>
+</div>
+
 
     <div id="waHomeContent">
       <div style="padding:12px;color:#777;font-size:13px">Your chats will appear here.</div>
@@ -1648,7 +1660,7 @@ function waTime(value) {
   });
 }
 
-function waAvatar(contact, size = 48) {
+function waAvatar(contact, size = 42) {
   const item = waContacts.find(c => c.name === contact) || {
     initials: "?", color: "#9ca3af"
   };
@@ -1676,14 +1688,14 @@ function renderWhatsAppHome(tab = "Chats") {
       return `
         <button class="chat-row" data-wa-contact="${contact.name}"
           onclick="openWhatsAppChat('${contact.name}')"
-          style="display:flex;align-items:center;gap:9px;width:100%;padding:7px 2px;border:0;background:transparent;text-align:left;color:inherit">
+          style="display:flex;align-items:center;gap:10px;width:100%;padding:7px 0;border:0;background:transparent;text-align:left;color:inherit"
           ${waAvatar(contact.name)}
           <span style="min-width:0;flex:1;border-bottom:1px solid #ededed;padding:3px 0 12px">
             <span style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-              <strong style="font-size:13px;font-weight:600">${contact.name}</strong>
+              <strong style="font-size:14px;font-weight:600">${contact.name}</strong>
               <span style="font-size:11px;color:#777">${time}</span>
             </span>
-            <span style="display:block;color:#777;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</span>
+            <span style="display:block;color:#777;font-size:12px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</span>
           </span>
         </button>`;
     }).join("");

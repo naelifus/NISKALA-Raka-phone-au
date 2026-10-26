@@ -789,7 +789,7 @@
       }
     }
 
-    @media (max-height: 690px) and (min-width: 431px) {
+    @media (max-height: 1px) and (min-width: 431px) {
       body {
         padding: 10px;
       }
@@ -1153,6 +1153,26 @@ html, body { overscroll-behavior: none; }
 .app-badge[hidden] { display: none; }
 
 
+    html, body { height: 100%; overflow: hidden; }
+body { padding: 0; }
+
+.phone {
+  position: fixed !important;
+  top: 50%;
+  left: 50%;
+  width: 390px !important;
+  height: 844px !important;
+  max-height: none !important;
+  aspect-ratio: auto;
+  transform: translate(-50%, -50%) scale(var(--s, 1));
+  transform-origin: center center;
+}
+
+.status-bar { height: 54px; padding: 17px 30px 0; font-size: 15px; font-weight: 600; align-items: center; }
+.sb-bat { background: #fff; color: #000; border-radius: 6px; padding: 1px 6px; font-size: 11px; font-weight: 700; }
+.phone:has(#appScreen.active) .status-bar { color: #111; }
+.phone:has(#appScreen.active) .sb-bat { background: #111; color: #fff; }
+
     
   </style>
 </head>
@@ -1161,12 +1181,23 @@ html, body { overscroll-behavior: none; }
   <main class="phone" id="phone">
     <div class="wallpaper" id="wallpaper"></div>
 
-    <div class="status-bar">
-      <span class="status-icons">
-        <span>●</span><span>◔</span><span>▰</span>
-      </span>
-    </div>
-
+   <div class="status-bar">
+  <span id="sbTime">9:41</span>
+  <span class="status-icons">
+    <svg viewBox="0 0 18 12" width="17" height="11" fill="currentColor" aria-hidden="true">
+      <rect x="0" y="8" width="3" height="4" rx="0.7"/><rect x="4" y="6" width="3" height="6" rx="0.7"/>
+      <rect x="8" y="3" width="3" height="9" rx="0.7"/><rect x="12" y="0" width="3" height="12" rx="0.7"/>
+    </svg>
+    <svg viewBox="0 0 16 12" width="15" height="11" aria-hidden="true">
+      <path d="M1 3.5 Q8 -2 15 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M3.8 6.3 Q8 2.7 12.2 6.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M6.3 9 Q8 7.5 9.7 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="8" cy="11" r="1" fill="currentColor"/>
+    </svg>
+    <span class="sb-bat">85</span>
+  </span>
+</div>
+    
     <div class="dynamic-island"></div>
     <div class="toast" id="toast"></div>
 
@@ -1463,7 +1494,7 @@ html, body { overscroll-behavior: none; }
 <button class="app" onclick="openApp('Calendar')">
   <span class="app-icon" style="background:#fff;color:#e34c4c;display:flex;flex-direction:column;justify-content:center;gap:0">
     <span style="font-size:10px;font-weight:700;line-height:13px">SAT</span>
-    <span id="calendarIconDay" style="font-size:25px;line-height:27px;font-weight:400;color:#222">24</span>
+    <span id="calendarIconWeekday" style="font-size:10px;font-weight:700;line-height:13px">SAT</span>
   </span>
   <span class="app-label">Calendar</span>
 </button>
@@ -1605,11 +1636,18 @@ function hideHomeNotification() {
       });
 
       $("statusTime").textContent = time;
+      const sb = $("sbTime");
+if (sb) sb.textContent = time;
+      
       $("lockTime").textContent = time;
       $("lockDate").textContent = date;
       $("homeDate").textContent = date;
       $("calendarDay").textContent = now.getDate();
       $("calendarIconDay").textContent = now.getDate();
+      const wd = $("calendarIconWeekday");
+      
+if (wd) wd.textContent = now.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
+      
       $("calendarMonth").innerHTML =
         now.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
         + "<br>" +
@@ -2694,6 +2732,14 @@ if (lastB && chats["Best Friend"]?.length) {
   lastB.textContent = chats["Best Friend"][chats["Best Friend"].length - 1].text;
 }
     updateMessagesBadge();
+
+    function fitPhone() {
+  const s = Math.min(1, (innerHeight - 24) / 844, (innerWidth - 8) / 390);
+  document.documentElement.style.setProperty("--s", s);
+}
+fitPhone();
+addEventListener("resize", fitPhone);
+    
   </script>
 </body>
 </html>

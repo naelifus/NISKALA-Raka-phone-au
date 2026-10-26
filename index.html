@@ -945,7 +945,87 @@ textarea {
 }
 
 
-  
+    
+/* Cinematic iOS notification center */
+.lock-notifications {
+  position: absolute;
+  top: 44%;
+  left: 16px;
+  right: 16px;
+  color: white;
+}
+
+.notification-heading {
+  margin: 0 0 10px 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.notification-card {
+  display: flex;
+  gap: 10px;
+  padding: 13px;
+  border-radius: 18px;
+  background: rgba(35, 38, 45, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.notification-app-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #3978d4;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.notification-topline span {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.notification-title {
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.notification-preview {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.lock-swipe-hint {
+  margin-top: 17px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+
+    
   </style>
 </head>
 
@@ -997,11 +1077,29 @@ textarea {
       <p class="lock-date" id="lockDate">Saturday, October 24</p>
       <div class="lock-time" id="lockTime">09:41</div>
 
-      <div class="lock-message">
-        <strong>NOTIFICATIONS</strong>
-        Your iPhone is ready.
-        <br>Swipe up to unlock.
+     
+<div class="lock-notifications" id="lockNotifications">
+  <div class="notification-heading">NOTIFICATION CENTER</div>
+
+  <div class="notification-card">
+    <div class="notification-app-icon">M</div>
+
+    <div class="notification-content">
+      <div class="notification-topline">
+        <strong>Messages</strong>
+        <span>now</span>
       </div>
+
+      <div class="notification-title">Unknown Number</div>
+      <div class="notification-preview">
+        Raka, kamu masih di sana?
+      </div>
+    </div>
+  </div>
+
+  <p class="lock-swipe-hint">Swipe up to open</p>
+</div>
+
 
       <div class="lock-bottom">
         <button class="round-control" aria-label="Flashlight"

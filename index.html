@@ -2765,38 +2765,6 @@ if (lastB && chats["Best Friend"]?.length) {
   fitPhone();
   addEventListener("resize", fitPhone);
 
-  // Swipe up lockscreen (HP + laptop)
-  (function () {
-    const lock = document.getElementById("lockScreen");
-    let startY = null;
-    let dist = 0;
-
-    lock.addEventListener("pointerdown", e => {
-      if (e.target.closest("button")) return;
-      startY = e.clientY;
-      dist = 0;
-      lock.setPointerCapture(e.pointerId);
-      lock.style.transition = "none";
-    });
-
-    lock.addEventListener("pointermove", e => {
-      if (startY === null) return;
-      dist = startY - e.clientY;
-      lock.style.transform = "translateY(" + Math.min(0, -dist) * 0.65 + "px)";
-    });
-
-    function end() {
-      if (startY === null) return;
-      const d = dist;
-      startY = null;
-      lock.style.transition = "";
-      lock.style.transform = "";
-      if (d > 40 || Math.abs(d) < 8) unlock();
-    }
-
-    lock.addEventListener("pointerup", end);
-    lock.addEventListener("pointercancel", end);
-  })();
   </script>
 </body>
 </html>

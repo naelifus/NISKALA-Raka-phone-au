@@ -1674,11 +1674,18 @@ if (calendarMonth) {
     + "<br>" +
     now.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
 }
-    updateClock();
-    setInterval(updateClock, 10000);
+   if (calendarMonth) {
+  calendarMonth.innerHTML =
+    now.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
+    + "<br>" +
+    now.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
+}
+} // penutup fungsi updateClock()
 
-    function showScreen(screenId) {
-      const nextScreen = $(screenId);
+updateClock();
+setInterval(updateClock, 10000);
+
+function showScreen(screenId) {
       if (!nextScreen) return;
       
       document.querySelectorAll(".screen").forEach(screen => {

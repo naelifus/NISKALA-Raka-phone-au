@@ -2754,9 +2754,8 @@ if (lastB && chats["Best Friend"]?.length) {
 }
     updateMessagesBadge();
 
-    
    </script>
-  
+
  <script>
   function fitPhone() {
     const s = Math.min(1, (innerHeight - 24) / 844, (innerWidth - 8) / 390);
@@ -2765,6 +2764,42 @@ if (lastB && chats["Best Friend"]?.length) {
   fitPhone();
   addEventListener("resize", fitPhone);
 
+   
+   // Swipe up lockscreen (HP + laptop)
+(function () {
+  const lock = document.getElementById("lockScreen");
+  if (!lock) return;
+
+  let startY = null;
+  let dist = 0;
+
+  lock.addEventListener("pointerdown", e => {
+    if (e.target.closest("button, input, textarea, a")) return;
+    startY = e.clientY;
+    dist = 0;
+    lock.style.transition = "none";
+  });
+
+  lock.addEventListener("pointermove", e => {
+    if (startY === null) return;
+    dist = startY - e.clientY;
+    lock.style.transform =
+      "translateY(" + Math.min(0, -dist) * 0.65 + "px)";
+  });
+
+  function end() {
+    if (startY === null) return;
+    const d = dist;
+    startY = null;
+    lock.style.transition = "";
+    lock.style.transform = "";
+
+    if (d > 40 || Math.abs(d) < 8) unlock();
+  }
+
+  lock.addEventListener("pointerup", end);
+  lock.addEventListener("pointercancel", end);
+})();
   </script>
 </body>
 </html>

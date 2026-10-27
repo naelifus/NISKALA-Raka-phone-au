@@ -1686,14 +1686,19 @@ updateClock();
 setInterval(updateClock, 10000);
 
 function showScreen(screenId) {
-      if (!nextScreen) return;
-      
-      document.querySelectorAll(".screen").forEach(screen => {
-        screen.classList.remove("active");
-      });
-      
-      nextScreen.classList.add("active");
-    }
+  const nextScreen = document.getElementById(screenId);
+
+  if (!nextScreen) {
+    console.error("Screen not found:", screenId);
+    return;
+  }
+
+  document.querySelectorAll(".screen").forEach(screen => {
+    screen.classList.remove("active");
+  });
+
+  nextScreen.classList.add("active");
+}
 
     function unlock() {
       enteredCode = "";

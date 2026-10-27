@@ -1648,19 +1648,32 @@ if (sb) sb.textContent = time;
       
       $("lockTime").textContent = time;
       $("lockDate").textContent = date;
-      $("homeDate").textContent = date;
-      $("calendarDay").textContent = now.getDate();
-      $("calendarIconDay").textContent = now.getDate();
-      const wd = $("calendarIconWeekday");
-      
-if (wd) wd.textContent = now.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
-      
-      $("calendarMonth").innerHTML =
-        now.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
-        + "<br>" +
-        now.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
-    }
+      const lockTime = $("lockTime");
+const lockDate = $("lockDate");
+const homeDate = $("homeDate");
+const calendarDay = $("calendarDay");
+const calendarIconDay = $("calendarIconDay");
+const calendarIconWeekday = $("calendarIconWeekday");
+const calendarMonth = $("calendarMonth");
 
+if (lockTime) lockTime.textContent = time;
+if (lockDate) lockDate.textContent = date;
+if (homeDate) homeDate.textContent = date;
+if (calendarDay) calendarDay.textContent = now.getDate();
+if (calendarIconDay) calendarIconDay.textContent = now.getDate();
+
+if (calendarIconWeekday) {
+  calendarIconWeekday.textContent = now
+    .toLocaleDateString("en-US", { weekday: "short" })
+    .toUpperCase();
+}
+
+if (calendarMonth) {
+  calendarMonth.innerHTML =
+    now.toLocaleDateString("en-US", { month: "short" }).toUpperCase()
+    + "<br>" +
+    now.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
+}
     updateClock();
     setInterval(updateClock, 10000);
 

@@ -2440,7 +2440,17 @@ if (tab === "Updates") {
         </div>`).join("")}`;
   }
 }
+    
+    function waPresence(contact) {
+  const onlineContacts = ["Raras", "Diajeng", "Rakha"];
 
+  if (onlineContacts.includes(contact)) {
+    return "online";
+  }
+
+  return "terakhir dilihat hari ini";
+}
+    
 function openWhatsAppChat(contact) {
   const waNav = $("waBottomNav");
   if (waNav) waNav.style.display = "none";
@@ -2454,11 +2464,19 @@ $("appContent").innerHTML = `
     <div style="display:flex;flex-direction:column;height:100%;min-height:0">
       <div style="display:flex;align-items:center;gap:8px;padding-bottom:10px">
         <button onclick="openWhatsAppList()" style="background:transparent;color:#16834a;font-size:15px">‹ Chats</button>
-        ${waAvatar(contact, 36)}
-        <strong>${contact}</strong>
+       ${waAvatar(contact, 36)}
+<div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+  <strong>${contact}</strong>
+  <span style="font-size:11px;color:#667781">
+    ${waPresence(contact)}
+  </span>
+</div>
       </div>
-      <div id="waMessages" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:12px 2px;background:#efeae2;border-radius:12px">
-      </div>
+     <div id="waMessages" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:12px 2px;background:#efeae2;border-radius:12px">
+</div>
+<div id="waTyping" style="display:none;font-size:12px;color:#667781;padding:4px 8px">
+  sedang mengetik…
+</div>
       <form id="waChatForm" style="display:flex;gap:8px;padding:10px 0">
         <input id="waChatInput" placeholder="Message" autocomplete="off"
           style="min-width:0;flex:1;border:1px solid #ddd;border-radius:22px;padding:11px;background:white;color:#222">
@@ -2469,19 +2487,33 @@ $("appContent").innerHTML = `
   const list = $("waMessages");
   messages.forEach(message => addWhatsAppBubble(list, message));
 
-  $("waChatForm").addEventListener("submit", event => {
-    event.preventDefault();
-    const input = $("waChatInput");
-    const value = input.value.trim();
-    if (!value) return;
+ $("waChatForm").addEventListener("submit", event => {
+  event.preventDefault();
 
-    const message = { text: value, time: Date.now(), from: "Raka" };
-    waChats[contact] ||= [];
-    waChats[contact].push(message);
-    waSaveChats();
-    addWhatsAppBubble(list, message);
-    input.value = "";
-  });
+  const input = $("waChatInput");
+  const value = input.value.trim();
+  if (!value) return;
+
+  const message = {
+    text: value,
+    time: Date.now(),
+    from: "Raka"
+  };
+
+  waChats[contact] ||= [];
+  waChats[contact].push(message);
+  waSaveChats();
+  addWhatsAppBubble(list, message);
+  input.value = "";
+
+  const typing = $("waTyping");
+  typing.style.display = "block";
+  typing.textContent = `${contact} sedang mengetik…`;
+
+  setTimeout(() => {
+    typing.style.display = "none";
+  }, 1500);
+});
 
   showScreen("appScreen");
   list.scrollTop = list.scrollHeight;

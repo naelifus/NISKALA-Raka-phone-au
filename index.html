@@ -2198,6 +2198,61 @@ const waContacts = [
   { name: "8 Komponen", initials: "8", color: "#7e9c85", preview: "Raras: pada ke mana?" }
 ];
 
+const waInitialChats = {
+  "Raras": [
+    { text: "Rak, lu udah di kamar?", from: "Raras", time: Date.now() - 3600000 },
+    { text: "Udah. Kenapa?", from: "Raka", time: Date.now() - 3500000 },
+    { text: "Gapapa, cuma mastiin aja wkwk", from: "Raras", time: Date.now() - 3400000 }
+  ],
+  "Arya": [
+    { text: "Lu udah di rumah?", from: "Arya", time: Date.now() - 7200000 },
+    { text: "Udah, kenapa emang?", from: "Raka", time: Date.now() - 7100000 },
+    { text: "Tadi kayak ada yang ngikutin pas pulang", from: "Arya", time: Date.now() - 7000000 }
+  ],
+  "Diajeng": [
+    { text: "BESOK JANGAN ADA YANG TELAT", from: "Diajeng", time: Date.now() - 5400000 },
+    { text: "Lu ngomong ke diri sendiri kali", from: "Raka", time: Date.now() - 5300000 },
+    { text: "WKWKWK ANJIR", from: "Diajeng", time: Date.now() - 5200000 }
+  ],
+  "Anindya": [
+    { text: "Besok jadi kan ke sana?", from: "Anindya", time: Date.now() - 4800000 },
+    { text: "Jadi. Yang lain udah tau?", from: "Raka", time: Date.now() - 4700000 },
+    { text: "Udah, tinggal nunggu Sekar", from: "Anindya", time: Date.now() - 4600000 }
+  ],
+  "Sekar": [
+    { text: "Aku kirim fotonya nanti ya", from: "Sekar", time: Date.now() - 4200000 },
+    { text: "Oke, jangan lupa", from: "Raka", time: Date.now() - 4100000 }
+  ],
+  "Rangga": [
+    { text: "Otw bentar", from: "Rangga", time: Date.now() - 3000000 },
+    { text: "Bentar lu tuh 30 menit apa 2 jam?", from: "Raka", time: Date.now() - 2900000 },
+    { text: "Sabar napa 😭", from: "Rangga", time: Date.now() - 2800000 }
+  ],
+  "Rakha": [
+    { text: "Kunci depan udah lu cek?", from: "Rakha", time: Date.now() - 2400000 },
+    { text: "Udah. Kenapa pada nanyain kunci terus?", from: "Raka", time: Date.now() - 2300000 },
+    { text: "Gak apa-apa. Pastikan aja", from: "Rakha", time: Date.now() - 2200000 }
+  ],
+  "Bu Dyah": [
+    { text: "Sudah sampai, Nak?", from: "Bu Dyah", time: Date.now() - 1800000 },
+    { text: "Sudah, Bu. Ada apa?", from: "Raka", time: Date.now() - 1700000 },
+    { text: "Tidak apa-apa. Jangan lupa kunci pintunya sebelum tidur.", from: "Bu Dyah", time: Date.now() - 1600000 }
+  ],
+  "8 Komponen": [
+    { text: "Pada ke mana? Besok jadi kumpul, kan?", from: "Raras", time: Date.now() - 900000 },
+    { text: "Jadi lah", from: "Rangga", time: Date.now() - 800000 },
+    { text: "Jangan ada yang ngilang lagi", from: "Diajeng", time: Date.now() - 700000 }
+  ]
+};
+
+Object.entries(waInitialChats).forEach(([contact, messages]) => {
+  if (!Array.isArray(waChats[contact]) || waChats[contact].length === 0) {
+    waChats[contact] = messages;
+  }
+});
+
+waSaveChats();
+
 function waSaveChats() {
   localStorage.setItem("raka-wa-chats", JSON.stringify(waChats));
 }

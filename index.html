@@ -2527,21 +2527,30 @@ $("appContent").innerHTML = `
   addWhatsAppBubble(list, message);
   input.value = "";
 
-  const typingBubble = document.createElement("div");
-  typingBubble.textContent = `${contact} sedang mengetik…`;
-  typingBubble.style.cssText = `
-    align-self:flex-start;
-    background:#fff;
-    color:#667781;
-    padding:9px 12px;
-    border-radius:13px;
-    font-size:12px;
-    font-style:italic;
-  `;
+ const typingBubble = document.createElement("div");
 
-  list.appendChild(typingBubble);
-  list.scrollTop = list.scrollHeight;
+typingBubble.style.cssText = `
+  display:flex;
+  align-items:center;
+  gap:7px;
+  align-self:flex-start;
+  background:#fff;
+  color:#667781;
+  padding:6px 10px;
+  border-radius:14px;
+  font-size:12px;
+`;
+   
+const typingMember =
+  contact === "8 Komponen" ? "Raras" : contact;
+   
+const typingAvatar = document.createElement("div");
+typingAvatar.innerHTML = waAvatar(typingMember, 28);
 
+const typingText = document.createElement("span");
+typingText.textContent = `${typingMember} sedang mengetik…`;
+   
+typingBubble.append(typingAvatar, typingText);
   setTimeout(() => {
     typingBubble.remove();
   }, 2500);

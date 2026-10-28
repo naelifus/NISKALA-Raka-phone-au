@@ -2463,7 +2463,11 @@ if (tab === "Updates") {
     return members.join(", ");
   }
 
-  const onlineContacts = ["Raras", "Diajeng", "Rakha"];
+ const onlineMembers = window.waOnlineMembers || [
+  "Raras",
+  "Diajeng",
+  "Rakha"
+];
 
   if (onlineContacts.includes(contact)) {
     return "online";

@@ -2441,7 +2441,28 @@ if (tab === "Updates") {
   }
 }
     
-    function waPresence(contact) {
+  function waPresence(contact) {
+  if (contact === "8 Komponen") {
+    const members = [
+      "Raras",
+      "Arya",
+      "Diajeng",
+      "Anindya",
+      "Sekar",
+      "Rangga",
+      "Rakha"
+    ];
+
+    // Anggota yang sedang online dalam simulasi
+  const onlineMembers = [];
+
+    if (onlineMembers.length > 0) {
+      return `${onlineMembers.length} online`;
+    }
+
+    return members.join(", ");
+  }
+
   const onlineContacts = ["Raras", "Diajeng", "Rakha"];
 
   if (onlineContacts.includes(contact)) {
@@ -2506,13 +2527,24 @@ $("appContent").innerHTML = `
   addWhatsAppBubble(list, message);
   input.value = "";
 
-  const typing = $("waTyping");
-  typing.style.display = "block";
-  typing.textContent = `${contact} sedang mengetik…`;
+  const typingBubble = document.createElement("div");
+  typingBubble.textContent = `${contact} sedang mengetik…`;
+  typingBubble.style.cssText = `
+    align-self:flex-start;
+    background:#fff;
+    color:#667781;
+    padding:9px 12px;
+    border-radius:13px;
+    font-size:12px;
+    font-style:italic;
+  `;
+
+  list.appendChild(typingBubble);
+  list.scrollTop = list.scrollHeight;
 
   setTimeout(() => {
-    typing.style.display = "none";
-  }, 1500);
+    typingBubble.remove();
+  }, 2500);
 });
 
   showScreen("appScreen");

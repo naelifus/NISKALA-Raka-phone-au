@@ -2440,6 +2440,16 @@ if (tab === "Updates") {
         </div>`).join("")}`;
   }
 }
+
+    window.waOnlineMembers = window.waOnlineMembers || [
+  "Raras",
+  "Diajeng",
+  "Rakha"
+];
+
+function setWAOnlineMembers(names) {
+  window.waOnlineMembers = names;
+}
     
   function waPresence(contact) {
   if (contact === "8 Komponen") {

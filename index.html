@@ -2449,6 +2449,13 @@ if (tab === "Updates") {
 
 function setWAOnlineMembers(names) {
   window.waOnlineMembers = names;
+
+  const label = document.getElementById("waPresenceLabel");
+
+  if (label) {
+    const contact = document.getElementById("appTitle").textContent;
+    label.textContent = waPresence(contact);
+  }
 }
     
   function waPresence(contact) {
@@ -2502,9 +2509,9 @@ $("appContent").innerHTML = `
        ${waAvatar(contact, 36)}
 <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
   <strong>${contact}</strong>
-  <span style="font-size:11px;color:#667781">
-    ${waPresence(contact)}
-  </span>
+ <span id="waPresenceLabel" style="font-size:11px;color:#667781">
+  ${waPresence(contact)}
+</span>
 </div>
       </div>
      <div id="waMessages" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:12px 2px;background:#efeae2;border-radius:12px">

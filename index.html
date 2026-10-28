@@ -2160,17 +2160,44 @@ function waTime(value) {
   });
 }
 
+
 function waAvatar(contact, size = 42) {
   const item = waContacts.find(c => c.name === contact) || {
-    initials: "?", color: "#9ca3af"
+    initials: "?",
+    color: "#9ca3af"
   };
 
+  if (item.photo) {
+    return `<img
+      src="${item.photo}"
+      alt="${contact}"
+      style="
+        display:block;
+        flex-shrink:0;
+        width:${size}px;
+        height:${size}px;
+        border-radius:50%;
+        object-fit:cover;
+      "
+    >`;
+  }
+
   return `<span style="
-    display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;
-    width:${size}px;height:${size}px;border-radius:50%;
-    background:${item.color};color:white;font-weight:600;font-size:${Math.round(size * 0.38)}px
+    display:inline-flex;
+    flex-shrink:0;
+    align-items:center;
+    justify-content:center;
+    width:${size}px;
+    height:${size}px;
+    border-radius:50%;
+    background:${item.color};
+    color:white;
+    font-weight:600;
+    font-size:${Math.round(size * 0.38)}px;
+    overflow:hidden;
   ">${item.initials}</span>`;
 }
+
 
 function renderWhatsAppHome(tab = "Chats") {
   $("appTitle").textContent = "WhatsApp";

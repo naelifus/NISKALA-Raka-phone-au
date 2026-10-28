@@ -2461,20 +2461,26 @@ function setWAOnlineMembers(names) {
   }
 }
     
-  function waPresence(contact) {
-  if (contact === "8 Komponen Group") {
-    const members = [
+function waPresence(contact) {
+  const members = [
+    "Raras",
+    "Arya",
+    "Diajeng",
+    "Anindya",
+    "Sekar",
+    "Rangga",
+    "Rakha"
+  ];
+
+  if (
+    contact === "8 Komponen" ||
+    contact === "8 Komponen Group"
+  ) {
+    const onlineMembers = window.waOnlineMembers || [
       "Raras",
-      "Arya",
       "Diajeng",
-      "Anindya",
-      "Sekar",
-      "Rangga",
       "Rakha"
     ];
-
-    // Anggota yang sedang online dalam simulasi
-  const onlineMembers = [];
 
     if (onlineMembers.length > 0) {
       return `${onlineMembers.length} online`;
@@ -2483,11 +2489,7 @@ function setWAOnlineMembers(names) {
     return members.join(", ");
   }
 
- const onlineMembers = window.waOnlineMembers || [
-  "Raras",
-  "Diajeng",
-  "Rakha"
-];
+  const onlineContacts = ["Raras", "Diajeng", "Rakha"];
 
   if (onlineContacts.includes(contact)) {
     return "online";

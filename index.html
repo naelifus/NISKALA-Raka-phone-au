@@ -2653,7 +2653,19 @@ function openWhatsAppChat(contact) {
         <button type="submit"
           style="background:#16834a;color:white;border-radius:50%;
           width:42px;height:42px">↑</button>
+          
       </form>
+
+      <div id="waVirtualKeyboard" class="wa-virtual-keyboard">
+        <div class="wa-keyboard-toolbar">
+          <span>ABC</span>
+          <button type="button" id="waKeyboardClose"
+            style="background:transparent;color:#4b5563">
+            Selesai
+          </button>
+        </div>
+        <div id="waKeyboardKeys"></div>
+      </div>
     </div>
   `;
 

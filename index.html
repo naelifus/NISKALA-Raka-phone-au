@@ -2500,93 +2500,140 @@ function waPresence(contact) {
   return "terakhir dilihat hari ini";
 }
     
+
 function openWhatsAppChat(contact) {
   const waNav = $("waBottomNav");
   if (waNav) waNav.style.display = "none";
 
   const messages = waChats[contact] || [];
   $("appTitle").textContent = contact;
+  $("appContent").classList.add("wa-chat-open");
 
- $("appContent").classList.add("wa-chat-open");
-
-$("appContent").innerHTML = `
+  $("appContent").innerHTML = `
     <div style="display:flex;flex-direction:column;height:100%;min-height:0">
       <div style="display:flex;align-items:center;gap:8px;padding-bottom:10px">
-        <button onclick="openWhatsAppList()" style="background:transparent;color:#16834a;font-size:15px">‹ Chats</button>
-       ${waAvatar(contact, 36)}
-<div style="display:flex;flex-direction:column;gap:3px;min-width:0">
-  <strong>${contact}</strong>
- <span id="waPresenceLabel" style="font-size:11px;color:#667781">
-  ${waPresence(contact)}
-</span>
-</div>
+        <button onclick="openWhatsAppList()"
+          style="background:transparent;color:#16834a;font-size:15px">
+          ‹ Chats
+        </button>
+        ${waAvatar(contact, 36)}
+        <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+          <strong>${contact}</strong>
+          <span style="font-size:11px;color:#667781">
+            ${waPresence(contact)}
+          </span>
+        </div>
       </div>
-     <div id="waMessages" style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:12px 2px;background:#efeae2;border-radius:12px">
-</div>
-<div id="waTyping" style="display:none;font-size:12px;color:#667781;padding:4px 8px">
-  sedang mengetik…
-</div>
+
+      <div id="waMessages"
+        style="flex:1;min-height:0;overflow-y:auto;display:flex;
+        flex-direction:column;gap:9px;padding:12px 2px;
+        background:#efeae2;border-radius:12px">
+      </div>
+
+      <div id="waTyping"
+        style="display:none;font-size:12px;color:#667781;padding:4px 8px">
+        sedang mengetik…
+      </div>
+
       <form id="waChatForm" style="display:flex;gap:8px;padding:10px 0">
         <input id="waChatInput" placeholder="Message" autocomplete="off"
-          style="min-width:0;flex:1;border:1px solid #ddd;border-radius:22px;padding:11px;background:white;color:#222">
-        <button type="submit" style="background:#16834a;color:white;border-radius:50%;width:42px;height:42px">↑</button>
+          style="min-width:0;flex:1;border:1px solid #ddd;border-radius:22px;
+          padding:11px;background:white;color:#222">
+        <button type="submit"
+          style="background:#16834a;color:white;border-radius:50%;
+          width:42px;height:42px">↑</button>
       </form>
-    </div>`;
+    </div>
+  `;
 
   const list = $("waMessages");
   messages.forEach(message => addWhatsAppBubble(list, message));
 
- $("waChatForm").addEventListener("submit", event => {
-  event.preventDefault();
+  $("waChatForm").addEventListener("submit", async event => {
+    event.preventDefault();
 
-  const input = $("waChatInput");
-  const value = input.value.trim();
-  if (!value) return;
+    const input = $("waChatInput");
+    const value = input.value.trim();
+    if (!value) return;
 
-  const message = {
-    text: value,
-    time: Date.now(),
-    from: "Raka"
-  };
+    const message = {
+      text: value,
+      time: Date.now(),
+      from: "Raka"
+    };
 
-  waChats[contact] ||= [];
-  waChats[contact].push(message);
-  waSaveChats();
-  addWhatsAppBubble(list, message);
-  input.value = "";
+    waChats[contact] ||= [];
 
- const typingBubble = document.createElement("div");
+    // Simpan riwayat sebelum pesan terbaru untuk konteks AI.
+    const history = waChats[contact]
+      .slice(-12)
+      .map(item => ({
+        role: item.from === "Raka" ? "user" : "model",
+        text: item.text
+      }));
 
-typingBubble.style.cssText = `
-  display:flex;
-  align-items:center;
-  gap:7px;
-  align-self:flex-start;
-  background:#fff;
-  color:#667781;
-  padding:6px 10px;
-  border-radius:14px;
-  font-size:12px;
-`;
-   
-const typingMember =
-  contact === "8 Komponen" ? "Raras" : contact;
-   
-const typingAvatar = document.createElement("div");
-typingAvatar.innerHTML = waAvatar(typingMember, 28);
+    waChats[contact].push(message);
+    waSaveChats();
+    addWhatsAppBubble(list, message);
+    input.value = "";
 
-const typingText = document.createElement("span");
-typingText.textContent = `${typingMember} sedang mengetik…`;
-   
-typingBubble.append(typingAvatar, typingText);
-  setTimeout(() => {
-    typingBubble.remove();
-  }, 2500);
-});
+    const sendButton = $("waChatForm").querySelector("button");
+    sendButton.disabled = true;
+    input.disabled = true;
+
+    const typing = $("waTyping");
+    typing.style.display = "block";
+    typing.textContent = `${contact} sedang mengetik…`;
+    list.scrollTop = list.scrollHeight;
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          character: contact,
+          message: value,
+          history
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.reply) {
+        throw new Error(data.error || `Request gagal (${response.status})`);
+      }
+
+      const reply = {
+        text: data.reply,
+        time: Date.now(),
+        from: contact
+      };
+
+      waChats[contact].push(reply);
+      waSaveChats();
+      addWhatsAppBubble(list, reply);
+
+    } catch (error) {
+      console.error("Gagal mendapat balasan AI:", error);
+      if (typeof showToast === "function") {
+        showToast("Balasan AI gagal dimuat. Coba lagi.");
+      }
+    } finally {
+      typing.style.display = "none";
+      sendButton.disabled = false;
+      input.disabled = false;
+      input.focus();
+      list.scrollTop = list.scrollHeight;
+    }
+  });
 
   showScreen("appScreen");
   list.scrollTop = list.scrollHeight;
 }
+
 
 function addWhatsAppBubble(container, message) {
   const bubble = document.createElement("div");

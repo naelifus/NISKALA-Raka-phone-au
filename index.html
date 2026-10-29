@@ -2549,6 +2549,68 @@ function openWhatsAppChat(contact) {
       .wa-presence-label {
         transition: opacity 0.2s ease;
       }
+
+      
+        .wa-virtual-keyboard {
+          display: none;
+          flex-shrink: 0;
+          padding: 9px 4px 14px;
+          background: #d1d5db;
+          border-radius: 12px;
+          user-select: none;
+        }
+        
+        .wa-virtual-keyboard.visible {
+          display: block;
+        }
+        
+        .wa-key-row {
+          display: flex;
+          justify-content: center;
+          gap: 4px;
+          margin-bottom: 8px;
+        }
+        
+        .wa-key {
+          flex: 1;
+          min-width: 0;
+          height: 42px;
+          padding: 0 2px;
+          border: 0;
+          border-radius: 5px;
+          background: #fafafa;
+          color: #202124;
+          font-size: 17px;
+          box-shadow: 0 1px 0 #9ca3af;
+          cursor: pointer;
+        }
+        
+        .wa-key:active {
+          background: #b9c0cb;
+        }
+        
+        .wa-key.special {
+          background: #aeb7c4;
+          font-size: 13px;
+        }
+        
+        .wa-key.space {
+          flex: 5;
+        }
+        
+        .wa-key-row:last-child {
+          margin-bottom: 0;
+        }
+        
+        .wa-keyboard-toolbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 5px 9px;
+          color: #4b5563;
+          font-size: 12px;
+        }
+
     </style>
 
     <div style="display:flex;flex-direction:column;height:100%;min-height:0">
@@ -2596,6 +2658,148 @@ function openWhatsAppChat(contact) {
   `;
 
   const list = $("waMessages");
+
+  const waKeyboard = $("waVirtualKeyboard");
+  const waKeyboardKeys = $("waKeyboardKeys");
+  const waInput = $("waChatInput");
+
+  let waShift = false;
+  let waSymbols = false;
+
+  function waInsertText(text) {
+    if (waInput.disabled) return;
+
+    const start = waInput.selectionStart ?? waInput.value.length;
+    const end = waInput.selectionEnd ?? start;
+
+    waInput.value =
+      waInput.value.slice(0, start) +
+      text +
+      waInput.value.slice(end);
+
+    const cursor = start + text.length;
+    waInput.setSelectionRange(cursor, cursor);
+    waInput.dispatchEvent(new Event("input", { bubbles: true }));
+    waInput.focus();
+  }
+
+  function waRenderKeyboard() {
+    const rows = waSymbols
+      ? [
+          ["1","2","3","4","5","6","7","8","9","0"],
+          ["@","#","$","%","&","-","+","(",")","/"],
+          ["*","\"",":",";","!","?","'"],
+        ]
+      : [
+          ["q","w","e","r","t","y","u","i","o","p"],
+          ["a","s","d","f","g","h","j","k","l"],
+          ["SHIFT","z","x","c","v","b","n","m","BACK"],
+        ];
+
+    waKeyboardKeys.innerHTML = "";
+
+    rows.forEach((row, rowIndex) => {
+      const rowEl = document.createElement("div");
+      rowEl.className = "wa-key-row";
+
+      row.forEach(key => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "wa-key";
+
+        if (["SHIFT", "BACK"].includes(key)) {
+          button.classList.add("special");
+        }
+
+        button.textContent =
+          key === "SHIFT" ? "⇧" :
+          key === "BACK" ? "⌫" :
+          (!waSymbols && waShift ? key.toUpperCase() : key);
+
+        button.addEventListener("click", () => {
+          if (key === "SHIFT") {
+            waShift = !waShift;
+            waRenderKeyboard();
+          } else if (key === "BACK") {
+            const start = waInput.selectionStart ?? waInput.value.length;
+            const end = waInput.selectionEnd ?? start;
+
+            if (start !== end) {
+              waInput.setRangeText("", start, end, "start");
+            } else if (start > 0) {
+              waInput.setRangeText("", start - 1, start, "start");
+            }
+
+            waInput.dispatchEvent(new Event("input", { bubbles: true }));
+            waInput.focus();
+          } else {
+            waInsertText(
+              !waSymbols && waShift ? key.toUpperCase() : key
+            );
+
+            if (waShift) {
+              waShift = false;
+              waRenderKeyboard();
+            }
+          }
+        });
+
+        rowEl.appendChild(button);
+      });
+
+      waKeyboardKeys.appendChild(rowEl);
+    });
+
+    const bottom = document.createElement("div");
+    bottom.className = "wa-key-row";
+
+    const symbolButton = document.createElement("button");
+    symbolButton.type = "button";
+    symbolButton.className = "wa-key special";
+    symbolButton.textContent = waSymbols ? "ABC" : "123";
+    symbolButton.onclick = () => {
+      waSymbols = !waSymbols;
+      waRenderKeyboard();
+    };
+
+    const emojiButton = document.createElement("button");
+    emojiButton.type = "button";
+    emojiButton.className = "wa-key special";
+    emojiButton.textContent = "☺";
+    emojiButton.onclick = () => {
+      const emoji = prompt("Masukkan emoji yang ingin dipakai:", "😊");
+      if (emoji) waInsertText(emoji);
+    };
+
+    const spaceButton = document.createElement("button");
+    spaceButton.type = "button";
+    spaceButton.className = "wa-key space";
+    spaceButton.textContent = "spasi";
+    spaceButton.onclick = () => waInsertText(" ");
+
+    const enterButton = document.createElement("button");
+    enterButton.type = "button";
+    enterButton.className = "wa-key special";
+    enterButton.textContent = "Kirim";
+    enterButton.onclick = () => $("waChatForm").requestSubmit();
+
+    bottom.append(symbolButton, emojiButton, spaceButton, enterButton);
+    waKeyboardKeys.appendChild(bottom);
+  }
+
+  waRenderKeyboard();
+
+  waInput.setAttribute("inputmode", "none");
+
+  waInput.addEventListener("focus", () => {
+    waKeyboard.classList.add("visible");
+    list.scrollTop = list.scrollHeight;
+  });
+
+  $("waKeyboardClose").addEventListener("click", () => {
+    waKeyboard.classList.remove("visible");
+    waInput.blur();
+  });
 
   messages.forEach(message => addWhatsAppBubble(list, message));
 

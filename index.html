@@ -2463,63 +2463,107 @@ function setWAOnlineMembers(names) {
   }
 }
     
-function waPresence(contact) {
-  const members = [
-    "Raras",
-    "Arya",
-    "Diajeng",
-    "Anindya",
-    "Sekar",
-    "Rangga",
-    "Rakha"
-  ];
 
-  if (
-    contact === "8 Komponen" ||
-    contact === "8 Komponen Group"
-  ) {
-    const onlineMembers = window.waOnlineMembers || [
+function waPresence(contact) {
+  const typingContacts = window.waTypingContacts || new Set();
+  const activeContacts = window.waActiveContacts || new Set();
+
+  if (typingContacts.has(contact)) {
+    return "sedang mengetik…";
+  }
+
+  if (activeContacts.has(contact)) {
+    return "online";
+  }
+
+  if (contact === "8 Komponen" || contact === "8 Komponen Group") {
+    const members = window.waOnlineMembers || [
       "Raras",
       "Diajeng",
       "Rakha"
     ];
 
-    if (onlineMembers.length > 0) {
-      return `${onlineMembers.length} online`;
-    }
-
-    return members.join(", ");
+    return members.length ? `${members.length} online` : "terakhir dilihat";
   }
 
-  const onlineContacts = ["Raras", "Diajeng", "Rakha"];
-
-  if (onlineContacts.includes(contact)) {
-    return "online";
-  }
-
-  return "terakhir dilihat hari ini";
+  return "terakhir dilihat";
 }
-    
+
+function waUpdatePresenceLabel(contact) {
+  const label = document.getElementById("waPresenceLabel");
+
+  if (label) {
+    label.textContent = waPresence(contact);
+  }
+}
+
+function waDelay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function openWhatsAppChat(contact) {
   const waNav = $("waBottomNav");
   if (waNav) waNav.style.display = "none";
 
   const messages = waChats[contact] || [];
+
   $("appTitle").textContent = contact;
   $("appContent").classList.add("wa-chat-open");
 
   $("appContent").innerHTML = `
+    <style>
+      @keyframes waDotBounce {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-5px); }
+      }
+
+      .wa-typing-bubble {
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 11px 13px;
+        margin: 2px 0;
+        background: white;
+        border-radius: 14px;
+        width: fit-content;
+        box-shadow: 0 1px 1px #00000010;
+      }
+
+      .wa-typing-dot {
+        width: 6px;
+        height: 6px;
+        background: #87939a;
+        border-radius: 50%;
+        animation: waDotBounce 1s infinite ease-in-out;
+      }
+
+      .wa-typing-dot:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+
+      .wa-typing-dot:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      .wa-presence-label {
+        transition: opacity 0.2s ease;
+      }
+    </style>
+
     <div style="display:flex;flex-direction:column;height:100%;min-height:0">
       <div style="display:flex;align-items:center;gap:8px;padding-bottom:10px">
-        <button onclick="openWhatsAppList()"
+        <button type="button" onclick="openWhatsAppList()"
           style="background:transparent;color:#16834a;font-size:15px">
           ‹ Chats
         </button>
+
         ${waAvatar(contact, 36)}
+
         <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
           <strong>${contact}</strong>
-          <span style="font-size:11px;color:#667781">
+          <span id="waPresenceLabel" class="wa-presence-label"
+            style="font-size:11px;color:#667781">
             ${waPresence(contact)}
           </span>
         </div>
@@ -2527,19 +2571,23 @@ function openWhatsAppChat(contact) {
 
       <div id="waMessages"
         style="flex:1;min-height:0;overflow-y:auto;display:flex;
-        flex-direction:column;gap:9px;padding:12px 2px;
+        flex-direction:column;gap:9px;padding:12px 8px;
         background:#efeae2;border-radius:12px">
       </div>
 
-      <div id="waTyping"
-        style="display:none;font-size:12px;color:#667781;padding:4px 8px">
-        sedang mengetik…
+      <div id="waTyping" style="display:none;padding:3px 8px">
+        <div class="wa-typing-bubble" aria-label="Sedang mengetik">
+          <span class="wa-typing-dot"></span>
+          <span class="wa-typing-dot"></span>
+          <span class="wa-typing-dot"></span>
+        </div>
       </div>
 
       <form id="waChatForm" style="display:flex;gap:8px;padding:10px 0">
         <input id="waChatInput" placeholder="Message" autocomplete="off"
           style="min-width:0;flex:1;border:1px solid #ddd;border-radius:22px;
           padding:11px;background:white;color:#222">
+
         <button type="submit"
           style="background:#16834a;color:white;border-radius:50%;
           width:42px;height:42px">↑</button>
@@ -2548,6 +2596,7 @@ function openWhatsAppChat(contact) {
   `;
 
   const list = $("waMessages");
+
   messages.forEach(message => addWhatsAppBubble(list, message));
 
   $("waChatForm").addEventListener("submit", async event => {
@@ -2555,6 +2604,7 @@ function openWhatsAppChat(contact) {
 
     const input = $("waChatInput");
     const value = input.value.trim();
+
     if (!value) return;
 
     const message = {
@@ -2565,7 +2615,6 @@ function openWhatsAppChat(contact) {
 
     waChats[contact] ||= [];
 
-    // Simpan riwayat sebelum pesan terbaru untuk konteks AI.
     const history = waChats[contact]
       .slice(-12)
       .map(item => ({
@@ -2576,15 +2625,24 @@ function openWhatsAppChat(contact) {
     waChats[contact].push(message);
     waSaveChats();
     addWhatsAppBubble(list, message);
+
     input.value = "";
 
     const sendButton = $("waChatForm").querySelector("button");
+    const typing = $("waTyping");
+
     sendButton.disabled = true;
     input.disabled = true;
 
-    const typing = $("waTyping");
+    window.waActiveContacts ||= new Set();
+    window.waTypingContacts ||= new Set();
+
+    window.waActiveContacts.add(contact);
+    window.waTypingContacts.add(contact);
+
     typing.style.display = "block";
-    typing.textContent = `${contact} sedang mengetik…`;
+    waUpdatePresenceLabel(contact);
+
     list.scrollTop = list.scrollHeight;
 
     try {
@@ -2602,30 +2660,63 @@ function openWhatsAppChat(contact) {
 
       const data = await response.json();
 
-      if (!response.ok || !data.reply) {
+      if (!response.ok) {
         throw new Error(data.error || `Request gagal (${response.status})`);
       }
 
-      const reply = {
-        text: data.reply,
-        time: Date.now(),
-        from: contact
-      };
+      const replies = Array.isArray(data.messages)
+        ? data.messages
+        : (typeof data.reply === "string" && data.reply.trim()
+            ? [data.reply]
+            : []);
 
-      waChats[contact].push(reply);
-      waSaveChats();
-      addWhatsAppBubble(list, reply);
+      if (!replies.length) {
+        throw new Error("Balasan AI kosong.");
+      }
 
+      // Sembunyikan animasi ketika bubble balasan mulai muncul.
+      typing.style.display = "none";
+      window.waTypingContacts.delete(contact);
+      waUpdatePresenceLabel(contact);
+
+      for (let i = 0; i < replies.length; i++) {
+        const text = replies[i];
+
+        if (typeof text !== "string" || !text.trim()) continue;
+
+        // Jeda singkat agar pesan terasa dikirim bertahap.
+        if (i > 0) {
+          await waDelay(500 + Math.min(text.length * 12, 650));
+        }
+
+        const reply = {
+          text: text.trim(),
+          time: Date.now(),
+          from: contact
+        };
+
+        waChats[contact].push(reply);
+        waSaveChats();
+        addWhatsAppBubble(list, reply);
+      }
     } catch (error) {
       console.error("Gagal mendapat balasan AI:", error);
+
       if (typeof showToast === "function") {
         showToast("Balasan AI gagal dimuat. Coba lagi.");
       }
     } finally {
       typing.style.display = "none";
+
+      window.waTypingContacts.delete(contact);
+      window.waActiveContacts.delete(contact);
+
+      waUpdatePresenceLabel(contact);
+
       sendButton.disabled = false;
       input.disabled = false;
       input.focus();
+
       list.scrollTop = list.scrollHeight;
     }
   });
@@ -2633,6 +2724,7 @@ function openWhatsAppChat(contact) {
   showScreen("appScreen");
   list.scrollTop = list.scrollHeight;
 }
+
 
 
 function addWhatsAppBubble(container, message) {

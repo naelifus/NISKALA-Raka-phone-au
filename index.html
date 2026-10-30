@@ -1092,14 +1092,21 @@ textarea {
     opacity: 1;
     transform: translateY(0);
   }
-
-
+  
 
 }
 html, body { overscroll-behavior: none; }
 
-#lockScreen,
-#lockScreen * { touch-action: none; }
+#lockScreen {
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#lockScreen * {
+  touch-action: none;
+}
 
 .swipe-hint {
   width: 150px;
@@ -1125,12 +1132,11 @@ html, body { overscroll-behavior: none; }
 .phone:has(#appScreen.active) .swipe-hint::after {
   background: #222;
 }
-
+    
 .notification-card,
 .notification-heading {
   display: none !important;
 }
-
 
     .app { position: relative; }
 
@@ -1210,87 +1216,74 @@ body { padding: 0; }
     <div class="dynamic-island"></div>
     <div class="toast" id="toast"></div>
 
-    <!-- LOCK SCREEN -->
-    <section class="screen lock-screen active" id="lockScreen">
-     
-<div class="lock-status-bar">
-  <span id="statusTime">9:41</span>
-  <div class="lock-status-icons">
-    <span class="ios-signal" aria-label="Cellular signal">
-      <svg viewBox="0 0 18 12" width="15" height="10" aria-hidden="true">
-        <rect x="0" y="8" width="3" height="4" rx="0.7" fill="currentColor"/>
-        <rect x="4" y="6" width="3" height="6" rx="0.7" fill="currentColor"/>
-        <rect x="8" y="3" width="3" height="9" rx="0.7" fill="currentColor"/>
-        <rect x="12" y="0" width="3" height="12" rx="0.7" fill="currentColor"/>
-      </svg>
-    </span>
+   <!-- LOCK SCREEN -->
+<section class="screen lock-screen active" id="lockScreen">
 
-    <span class="ios-wifi" aria-label="Wi-Fi">
-      <svg viewBox="0 0 16 12" width="13" height="10" aria-hidden="true">
-        <path d="M1 3.5 Q8 -2 15 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M3.8 6.3 Q8 2.7 12.2 6.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M6.3 9 Q8 7.5 9.7 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <circle cx="8" cy="11" r="1" fill="currentColor"/>
-      </svg>
-    </span>
+  <div class="lock-status-bar">
+    <span id="statusTime">9:41</span>
+    <div class="lock-status-icons">
+      <span class="ios-signal" aria-label="Cellular signal">
+        <svg viewBox="0 0 18 12" width="15" height="10" aria-hidden="true">
+          <rect x="0" y="8" width="3" height="4" rx="0.7" fill="currentColor"/>
+          <rect x="4" y="6" width="3" height="6" rx="0.7" fill="currentColor"/>
+          <rect x="8" y="3" width="3" height="9" rx="0.7" fill="currentColor"/>
+          <rect x="12" y="0" width="3" height="12" rx="0.7" fill="currentColor"/>
+        </svg>
+      </span>
 
-    <span class="lock-battery" aria-label="Battery 75 percent">
-      <span class="lock-battery-level"></span>
-    </span>
-  </div>
-</div>
+      <span class="ios-wifi" aria-label="Wi-Fi">
+        <svg viewBox="0 0 16 12" width="13" height="10" aria-hidden="true">
+          <path d="M1 3.5 Q8 -2 15 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M3.8 6.3 Q8 2.7 12.2 6.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M6.3 9 Q8 7.5 9.7 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="8" cy="11" r="1" fill="currentColor"/>
+        </svg>
+      </span>
 
-
-      <!-- Lock hint hidden; status bar is shown above -->
-      <p class="lock-date" id="lockDate">Saturday, October 24</p>
-      <div class="lock-time" id="lockTime">09:41</div>
-
-     
-<div class="lock-notifications" id="lockNotifications">
-  <p class="lock-swipe-hint">Swipe up to open</p>
-</div>
-
-  
-<button
-  class="notification-card"
-  type="button"
-  onclick="openApp('Messages')"
-  aria-label="Open Messages from Unknown Number"
-  style="
-    width:100%;
-    text-align:left;
-    color:inherit;
-    font:inherit;
-    cursor:pointer;
-  "
->
-  <div class="notification-app-icon">M</div>
-
-  <div class="notification-content">
-    <div class="notification-topline">
-      <strong>Messages</strong>
-      <span>now</span>
-    </div>
-
-    <div class="notification-title">Unknown Number</div>
-    <div class="notification-preview">
-      Raka, kamu masih di sana?
+      <span class="lock-battery" aria-label="Battery 75 percent">
+        <span class="lock-battery-level"></span>
+      </span>
     </div>
   </div>
-</button>
 
-  <p class="lock-swipe-hint">Swipe up to open</p>
-</div>
+  <p class="lock-date" id="lockDate">Saturday, October 24</p>
+  <div class="lock-time" id="lockTime">09:41</div>
 
+  <div class="lock-notifications" id="lockNotifications">
+    <p class="lock-swipe-hint">Swipe up to open</p>
+  </div>
 
-      <div class="lock-bottom">
-        <button class="round-control" aria-label="Flashlight"
-          onclick="showToast('Flashlight is on')">⌁</button>
-        <button class="round-control" aria-label="Camera"
-          onclick="openApp('Photos')">◎</button>
+  <button
+    class="notification-card"
+    type="button"
+    onclick="openApp('Messages')"
+    aria-label="Open Messages from Unknown Number"
+    style="width:100%; text-align:left; color:inherit; font:inherit; cursor:pointer;"
+  >
+    <div class="notification-app-icon">M</div>
+    <div class="notification-content">
+      <div class="notification-topline">
+        <strong>Messages</strong>
+        <span>now</span>
       </div>
-    </section>
+      <div class="notification-title">Unknown Number</div>
+      <div class="notification-preview">
+        Raka, kamu masih di sana?
+      </div>
+    </div>
+  </button>
 
+  <p class="lock-swipe-hint">Swipe up to open</p>
+
+  <div class="lock-bottom">
+    <button class="round-control" aria-label="Flashlight"
+      onclick="showToast('Flashlight is on')">⌁</button>
+    <button class="round-control" aria-label="Camera"
+      onclick="openApp('Photos')">◎</button>
+  </div>
+
+</section>
+    
     <!-- PASSCODE SCREEN -->
     <section class="screen passcode-screen" id="passcodeScreen">
       <div style="font-size:35px">⌑</div>
@@ -3431,7 +3424,7 @@ function openInstagramDM() {
       setTimeout(() => showScreen("homeScreen"), 500);
     }
 
-    // ===== LOCK SCREEN SWIPE =====
+   // ===== LOCK SCREEN SWIPE =====
 const lock = $("lockScreen");
 
 let startY = 0;
@@ -3444,7 +3437,7 @@ lock.addEventListener("pointerdown", e => {
   startY = e.clientY;
   lastY = e.clientY;
   trackingSwipe = true;
-  lock.style.transition = "none";
+
   lock.setPointerCapture(e.pointerId);
 });
 
@@ -3452,20 +3445,24 @@ lock.addEventListener("pointermove", e => {
   if (!trackingSwipe) return;
 
   lastY = e.clientY;
+
   const distance = startY - lastY;
 
-  lock.style.transform =
-    `translateY(${Math.min(0, -distance) * 0.65}px)`;
+  if (distance > 0) {
+    lock.style.setProperty(
+      "--swipe-offset",
+      `${-distance * 0.65}px`
+    );
+  }
 });
 
-function finishLockSwipe() {
+function finishLockSwipe(e) {
   if (!trackingSwipe) return;
 
   const distance = startY - lastY;
   trackingSwipe = false;
 
-  lock.style.transition = "";
-  lock.style.transform = "";
+  lock.style.removeProperty("--swipe-offset");
 
   if (distance > 40) {
     unlock();
@@ -3473,7 +3470,11 @@ function finishLockSwipe() {
 }
 
 lock.addEventListener("pointerup", finishLockSwipe);
-lock.addEventListener("pointercancel", finishLockSwipe);
+
+lock.addEventListener("pointercancel", () => {
+  trackingSwipe = false;
+  lock.style.removeProperty("--swipe-offset");
+});
 
 
     // Initialize message previews from saved chats.

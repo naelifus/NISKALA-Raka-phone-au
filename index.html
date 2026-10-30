@@ -2512,298 +2512,333 @@ function openWhatsAppChat(contact) {
 
   $("appContent").innerHTML = `
     
-    <style>
-      @keyframes waDotBounce {
-        0%, 60%, 100% { transform: translateY(0); }
-        30% { transform: translateY(-5px); }
-      }
-      
-       .wa-chat-shell {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          min-height: 0;
-          background: #0b141a;
-          color: #e9edef;
-          overflow: hidden;
-        }
-      
-        .wa-chat-header {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 10px 12px;
-          flex-shrink: 0;
-          background: #202c33;
-          color: #e9edef;
-        }
-      
-        .wa-back-button {
-          border: 0;
-          background: transparent;
-          color: #e9edef;
-          font-size: 27px;
-          padding: 0 3px;
-        }
-      
-        .wa-chat-info {
-          flex: 1;
-          min-width: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
-        }
-      
-        .wa-chat-info strong {
-          font-size: 15px;
-          font-weight: 600;
-        }
-      
-        .wa-presence-label {
-          font-size: 11px;
-          color: #aebac1;
-        }
-      
-        .wa-header-actions {
-          display: flex;
-          gap: 18px;
-          align-items: center;
-          font-size: 22px;
-          color: #e9edef;
-        }
-      
-        .wa-messages {
-          flex: 1;
-          min-height: 0;
-          overflow-y: auto;
-          display: flex;
-          flex-direction: column;
-          gap: 7px;
-          padding: 14px 9px;
-          background-color: #0b141a;
-          background-image:
-            radial-gradient(circle at 20% 20%, #26343d 1px, transparent 1.5px),
-            radial-gradient(circle at 80% 70%, #26343d 1px, transparent 1.5px),
-            radial-gradient(circle at 50% 40%, #1b2932 1px, transparent 1.5px);
-          background-size: 35px 35px, 47px 47px, 61px 61px;
-        }
-      
-        .wa-message-bubble {
-          position: relative;
-          max-width: 82%;
-          width: fit-content;
-          padding: 8px 10px 6px;
-          border-radius: 9px;
-          font-size: 14px;
-          line-height: 1.4;
-          overflow-wrap: anywhere;
-          box-shadow: 0 1px 1px #00000030;
-        }
-      
-        .wa-message-bubble.mine {
-          align-self: flex-end;
-          background: #005c4b;
-          color: #e9edef;
-          border-top-right-radius: 3px;
-        }
-      
-        .wa-message-bubble.theirs {
-          align-self: flex-start;
-          background: #202c33;
-          color: #e9edef;
-          border-top-left-radius: 3px;
-        }
-      
-        .wa-message-meta {
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-          gap: 4px;
-          margin-top: 4px;
-          color: #aebac1;
-          font-size: 10px;
-        }
-      
-        .wa-message-check {
-          color: #53bdeb;
-          font-size: 12px;
-          letter-spacing: -3px;
-          padding-right: 3px;
-        }
-      
-        .wa-typing-area {
-          display: none;
-          flex-shrink: 0;
-          padding: 4px 10px;
-          background: #0b141a;
-        }
-      
-        .wa-typing-bubble {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          width: fit-content;
-          padding: 10px 13px;
-          background: #202c33;
-          border-radius: 10px;
-        }
-      
-        .wa-typing-dot {
-          width: 6px;
-          height: 6px;
-          background: #aebac1;
-          border-radius: 50%;
-          animation: waDotBounce 1s infinite ease-in-out;
-        }
-      
-        .wa-typing-dot:nth-child(2) { animation-delay: .15s; }
-        .wa-typing-dot:nth-child(3) { animation-delay: .3s; }
-      
-        .wa-chat-form {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 9px 10px;
-          flex-shrink: 0;
-          background: #202c33;
-        }
-      
-        .wa-chat-input {
-          flex: 1;
-          min-width: 0;
-          height: 42px;
-          box-sizing: border-box;
-          border: 0;
-          outline: none;
-          border-radius: 24px;
-          padding: 0 16px;
-          background: #2a3942;
-          color: #e9edef;
-          font-size: 14px;
-        }
-      
-        .wa-chat-input::placeholder { color: #aebac1; }
-      
-        .wa-send-button {
-          width: 40px;
-          height: 40px;
-          flex-shrink: 0;
-          border: 0;
-          border-radius: 50%;
-          background: #00a884;
-          color: white;
-          font-size: 20px;
-        }
-      
-        .wa-send-button:disabled {
-          opacity: .5;
-        }
-      
-        .wa-virtual-keyboard {
-          display: none;
-          flex-shrink: 0;
-          padding: 9px 4px 14px;
-          background: #202329;
-          user-select: none;
-        }
-      
-        .wa-virtual-keyboard.visible { display: block; }
-      
-        .wa-key-row {
-          display: flex;
-          justify-content: center;
-          gap: 4px;
-          margin-bottom: 8px;
-        }
-      
-        .wa-key {
-          flex: 1;
-          min-width: 0;
-          height: 42px;
-          padding: 0 2px;
-          border: 0;
-          border-radius: 5px;
-          background: #555960;
-          color: #f5f5f5;
-          font-size: 17px;
-          box-shadow: 0 1px 0 #17191d;
-          cursor: pointer;
-        }
-      
-        .wa-key:active { background: #777d85; }
-      
-        .wa-key.special {
-          background: #41454d;
-          font-size: 13px;
-        }
-      
-        .wa-key.space { flex: 5; }
-      
-        .wa-key-row:last-child { margin-bottom: 0; }
-      
-        .wa-keyboard-toolbar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0 5px 9px;
-          color: #c4cbd0;
-          font-size: 12px;
-        }
-      </style>
-
-      <div class="wa-chat-shell">
-        <div class="wa-chat-header">
-          <button type="button" class="wa-back-button"
-            onclick="openWhatsAppList()">‹</button>
-      
-          ${waAvatar(contact, 40)}
-      
-          <div class="wa-chat-info">
-            <strong>${contact}</strong>
-            <span id="waPresenceLabel" class="wa-presence-label">
-              ${waPresence(contact)}
-            </span>
-          </div>
-      
-          <div class="wa-header-actions">
-            <span aria-label="Video call">▣</span>
-            <span aria-label="Telepon">☎</span>
-          </div>
-        </div>
-      
-        <div id="waMessages" class="wa-messages"></div>
-      
-        <div id="waTyping" class="wa-typing-area">
-          <div class="wa-typing-bubble" aria-label="Sedang mengetik">
-            <span class="wa-typing-dot"></span>
-            <span class="wa-typing-dot"></span>
-            <span class="wa-typing-dot"></span>
-          </div>
-        </div>
-      
-        <form id="waChatForm" class="wa-chat-form">
-          <input id="waChatInput" class="wa-chat-input"
-            placeholder="Pesan" autocomplete="off">
-      
-          <button type="submit" class="wa-send-button">➤</button>
-        </form>
-      </div>
-
+              <style>
+          @keyframes waDotBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+          }
           
-      </form>
+          .wa-chat-shell {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            background: #0b141a;
+            color: #e9edef;
+            overflow: hidden;
+          }
+          
+          .wa-chat-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            flex-shrink: 0;
+            background: #202c33;
+            color: #e9edef;
+          }
+          
+          .wa-back-button {
+            border: 0;
+            background: transparent;
+            color: #e9edef;
+            font-size: 27px;
+            padding: 0 3px;
+          }
+          
+          .wa-chat-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+          }
+          
+          .wa-chat-info strong {
+            font-size: 15px;
+            font-weight: 600;
+          }
+          
+          .wa-presence-label {
+            font-size: 11px;
+            color: #aebac1;
+          }
+          
+          .wa-header-actions {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            font-size: 22px;
+            color: #e9edef;
+          }
+          
+          .wa-messages {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 14px 9px;
+            background-color: #0b141a;
+            background-image:
+              radial-gradient(circle at 20% 20%, #26343d 1px, transparent 1.5px),
+              radial-gradient(circle at 80% 70%, #26343d 1px, transparent 1.5px),
+              radial-gradient(circle at 50% 40%, #1b2932 1px, transparent 1.5px);
+            background-size: 35px 35px, 47px 47px, 61px 61px;
+          
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+          
+          .wa-messages::-webkit-scrollbar {
+            display: none;
+            width: 0;
+          }
+          
+          .wa-message-bubble {
+            position: relative;
+            max-width: 82%;
+            width: fit-content;
+            padding: 8px 10px 6px;
+            border-radius: 9px;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+            box-shadow: 0 1px 1px #00000030;
+          }
+          
+          .wa-message-bubble.mine {
+            align-self: flex-end;
+            background: #005c4b;
+            color: #e9edef;
+            border-top-right-radius: 3px;
+          }
+          
+          .wa-message-bubble.theirs {
+            align-self: flex-start;
+            background: #202c33;
+            color: #e9edef;
+            border-top-left-radius: 3px;
+          }
+          
+          .wa-message-meta {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+            color: #aebac1;
+            font-size: 10px;
+          }
+          
+          .wa-message-check {
+            color: #53bdeb;
+            font-size: 12px;
+            letter-spacing: -3px;
+            padding-right: 3px;
+          }
+          
+          .wa-typing-area {
+            display: none;
+            flex-shrink: 0;
+            padding: 4px 10px;
+            background: #0b141a;
+          }
+          
+          .wa-typing-bubble {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            width: fit-content;
+            padding: 10px 13px;
+            background: #202c33;
+            border-radius: 10px;
+          }
+          
+          .wa-typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #aebac1;
+            border-radius: 50%;
+            animation: waDotBounce 1s infinite ease-in-out;
+          }
+          
+          .wa-typing-dot:nth-child(2) { animation-delay: .15s; }
+          .wa-typing-dot:nth-child(3) { animation-delay: .3s; }
+          
+          .wa-chat-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 10px;
+            flex-shrink: 0;
+            background: #202c33;
+          }
+          
+          .wa-chat-input {
+            flex: 1;
+            min-width: 0;
+            height: 42px;
+            box-sizing: border-box;
+            border: 0;
+            outline: none;
+            border-radius: 24px;
+            padding: 0 16px;
+            background: #2a3942;
+            color: #e9edef;
+            font-size: 14px;
+          }
+          
+          .wa-chat-input::placeholder {
+            color: #aebac1;
+          }
+          
+          .wa-send-button {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            border: 0;
+            border-radius: 50%;
+            background: #00a884;
+            color: white;
+            font-size: 20px;
+          }
+          
+          .wa-send-button:disabled {
+            opacity: .5;
+          }
+          
+          /* Keyboard iPhone-style */
+          .wa-virtual-keyboard {
+            display: block;
+            flex-shrink: 0;
+            width: 100%;
+            max-height: 0;
+            box-sizing: border-box;
+            overflow: hidden;
+            padding: 0 4px;
+            opacity: 0;
+            transform: translateY(100%);
+            pointer-events: none;
+            background: #202329;
+            user-select: none;
+            transition:
+              max-height .28s ease,
+              padding .28s ease,
+              opacity .22s ease,
+              transform .28s ease;
+          }
+          
+          .wa-virtual-keyboard.visible {
+            max-height: 310px;
+            padding: 10px 4px 24px;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+          }
+          
+          .wa-key-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 9px;
+            padding: 0 2px;
+          }
+          
+          .wa-key {
+            flex: 1;
+            min-width: 0;
+            height: 48px;
+            padding: 0 2px;
+            border: 0;
+            border-radius: 6px;
+            background: #555960;
+            color: #fff;
+            font-size: 19px;
+            box-shadow: 0 2px 0 #17191d;
+            cursor: pointer;
+          }
+          
+          .wa-key:active {
+            background: #777d85;
+          }
+          
+          .wa-key.special {
+            background: #41454d;
+            font-size: 14px;
+          }
+          
+          .wa-key.space {
+            flex: 5;
+          }
+          
+          .wa-key-row:last-child {
+            margin-bottom: 0;
+          }
+          
+          .wa-keyboard-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 7px 12px;
+            color: #c4cbd0;
+            font-size: 13px;
+          }
+         </style>
 
+
+    <div class="wa-chat-shell">
+    
+      <div class="wa-chat-header">
+        <button type="button" class="wa-back-button"
+          onclick="openWhatsAppList()">‹</button>
+    
+        ${waAvatar(contact, 40)}
+    
+        <div class="wa-chat-info">
+          <strong>${contact}</strong>
+          <span id="waPresenceLabel" class="wa-presence-label">
+            ${waPresence(contact)}
+          </span>
+        </div>
+    
+        <div class="wa-header-actions">
+          <span aria-label="Video call">▣</span>
+          <span aria-label="Telepon">☎</span>
+        </div>
+      </div>
+    
+      <div id="waMessages" class="wa-messages"></div>
+    
+      <div id="waTyping" class="wa-typing-area">
+        <div class="wa-typing-bubble" aria-label="Sedang mengetik">
+          <span class="wa-typing-dot"></span>
+          <span class="wa-typing-dot"></span>
+          <span class="wa-typing-dot"></span>
+        </div>
+      </div>
+    
+      <form id="waChatForm" class="wa-chat-form">
+        <input id="waChatInput" class="wa-chat-input"
+          placeholder="Pesan" autocomplete="off">
+    
+        <button type="submit" class="wa-send-button">➤</button>
+      </form>
+    
       <div id="waVirtualKeyboard" class="wa-virtual-keyboard">
         <div class="wa-keyboard-toolbar">
           <span>ABC</span>
           <button type="button" id="waKeyboardClose"
-            style="background:transparent;color:#4b5563">
+            style="background:transparent;color:#c4cbd0">
             Selesai
           </button>
         </div>
         <div id="waKeyboardKeys"></div>
       </div>
+    
     </div>
-  `;
+    `;
 
   const list = $("waMessages");
 
@@ -2939,20 +2974,25 @@ function openWhatsAppChat(contact) {
 
   waInput.setAttribute("inputmode", "none");
 
-  waInput.addEventListener("focus", () => {
-    waKeyboard.classList.add("visible");
+  function waShowKeyboard() {
+  waKeyboard.classList.add("visible");
+  requestAnimationFrame(() => {
     list.scrollTop = list.scrollHeight;
   });
+}
 
-  $("waKeyboardClose").addEventListener("click", () => {
-    waKeyboard.classList.remove("visible");
-    waInput.blur();
-  });
+  function waHideKeyboard() {
+  waKeyboard.classList.remove("visible");
+  waInput.blur();
+}
+  
+  mwaInput.addEventListener("focus", waShowKeyboard);
 
-  messages.forEach(message => addWhatsAppBubble(list, message));
+ list.addEventListener("click", () => {
+  waHideKeyboard();
+});
 
-  $("waChatForm").addEventListener("submit", async event => {
-    event.preventDefault();
+  $("waKeyboardClose").addEventListener("click", waHideKeyboard);
 
     const input = $("waChatInput");
     const value = input.value.trim();
@@ -3078,11 +3118,13 @@ function openWhatsAppChat(contact) {
 }
 
 
+
 function addWhatsAppBubble(container, message) {
   const bubble = document.createElement("div");
   const mine = message.from === "Raka";
 
-  bubble.className = `wa-message-bubble ${mine ? "mine" : "theirs"}`;
+  bubble.className =
+    `wa-message-bubble ${mine ? "mine" : "theirs"}`;
 
   const text = document.createElement("div");
   text.textContent = message.text;
@@ -3092,7 +3134,6 @@ function addWhatsAppBubble(container, message) {
 
   const time = document.createElement("span");
   time.textContent = waTime(message.time);
-
   meta.appendChild(time);
 
   if (mine) {

@@ -1617,6 +1617,13 @@ body { padding: 0; }
     let callAnswered = false;
 
     const $ = id => document.getElementById(id);
+    function showToast(message) {
+      const t = $("toast");
+      t.textContent = message;
+      t.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => t.classList.remove("show"), 1800);
+    }
 
     function updateMessagesBadge() {
   const badge = $("messagesBadge");
@@ -2467,9 +2474,6 @@ function setWAOnlineMembers(names) {
 function waPresence(contact) {
   const typingContacts = window.waTypingContacts || new Set();
   const activeContacts = window.waActiveContacts || new Set();
-
-  if (typingContacts.has(contact)) {
-    return "sedang mengetik…";
   }
 
   if (activeContacts.has(contact)) {
@@ -2986,13 +2990,12 @@ function openWhatsAppChat(contact) {
   waInput.blur();
 }
   
-  mwaInput.addEventListener("focus", waShowKeyboard);
-
- list.addEventListener("click", () => {
-  waHideKeyboard();
-});
-
+  waInput.addEventListener("focus", waShowKeyboard);
+  list.addEventListener("click", waHideKeyboard);
   $("waKeyboardClose").addEventListener("click", waHideKeyboard);
+
+  $("waChatForm").addEventListener("submit", async event => {
+    event.preventDefault();
 
     const input = $("waChatInput");
     const value = input.value.trim();

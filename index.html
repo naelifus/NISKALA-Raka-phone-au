@@ -2468,13 +2468,10 @@ function setWAOnlineMembers(names) {
     const contact = document.getElementById("appTitle").textContent;
     label.textContent = waPresence(contact);
   }
-}
     
 
 function waPresence(contact) {
-  const typingContacts = window.waTypingContacts || new Set();
   const activeContacts = window.waActiveContacts || new Set();
-  }
 
   if (activeContacts.has(contact)) {
     return "online";
@@ -2487,7 +2484,9 @@ function waPresence(contact) {
       "Rakha"
     ];
 
-    return members.length ? `${members.length} online` : "terakhir dilihat";
+    return members.length
+      ? `${members.length} online`
+      : "terakhir dilihat";
   }
 
   return "terakhir dilihat";

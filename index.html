@@ -2471,15 +2471,8 @@ function waPresence(contact) {
   }
 
   if (contact === "8 Komponen" || contact === "8 Komponen Group") {
-    const members = window.waOnlineMembers || [
-      "Raras",
-      "Diajeng",
-      "Rakha"
-    ];
-
-    return members.length
-      ? `${members.length} online`
-      : "terakhir dilihat";
+    const members = window.waOnlineMembers || ["Raras", "Diajeng", "Rakha"];
+    return members.length ? `${members.length} online` : "terakhir dilihat";
   }
 
   return "terakhir dilihat";

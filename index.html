@@ -2453,19 +2453,17 @@ function setWAOnlineMembers(names) {
   window.waOnlineMembers = names;
 
   // Tes: semua anggota grup sedang offline
-// setWAOnlineMembers([]);
-  
+  // setWAOnlineMembers([]);
+
   const label = document.getElementById("waPresenceLabel");
 
   if (label) {
     const contact = document.getElementById("appTitle").textContent;
     label.textContent = waPresence(contact);
   }
-    
+}
 
 function waPresence(contact) {
-  const activeContacts = window.waActiveContacts || new Set();
-
   if (activeContacts.has(contact)) {
     return "online";
   }

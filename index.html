@@ -2976,20 +2976,22 @@ function openWhatsAppChat(contact) {
 
   waRenderKeyboard();
 
-  waInput.setAttribute("inputmode", "none");
+   waInput.setAttribute("inputmode", "none");
+
+  messages.forEach(message => addWhatsAppBubble(list, message));
 
   function waShowKeyboard() {
-  waKeyboard.classList.add("visible");
-  requestAnimationFrame(() => {
-    list.scrollTop = list.scrollHeight;
-  });
-}
+    waKeyboard.classList.add("visible");
+    requestAnimationFrame(() => {
+      list.scrollTop = list.scrollHeight;
+    });
+  }
 
   function waHideKeyboard() {
-  waKeyboard.classList.remove("visible");
-  waInput.blur();
-}
-  
+    waKeyboard.classList.remove("visible");
+    waInput.blur();
+  }
+
   waInput.addEventListener("focus", waShowKeyboard);
   list.addEventListener("click", waHideKeyboard);
   $("waKeyboardClose").addEventListener("click", waHideKeyboard);
@@ -2999,14 +3001,9 @@ function openWhatsAppChat(contact) {
 
     const input = $("waChatInput");
     const value = input.value.trim();
-
     if (!value) return;
 
-    const message = {
-      text: value,
-      time: Date.now(),
-      from: "Raka"
-    };
+    const message = { text: value, time: Date.now(), from: "Raka" };
 
     waChats[contact] ||= [];
 
@@ -3020,7 +3017,6 @@ function openWhatsAppChat(contact) {
     waChats[contact].push(message);
     waSaveChats();
     addWhatsAppBubble(list, message);
-
     input.value = "";
 
     const sendButton = $("waChatForm").querySelector("button");
@@ -3031,26 +3027,18 @@ function openWhatsAppChat(contact) {
 
     window.waActiveContacts ||= new Set();
     window.waTypingContacts ||= new Set();
-
     window.waActiveContacts.add(contact);
     window.waTypingContacts.add(contact);
 
     typing.style.display = "block";
     waUpdatePresenceLabel(contact);
-
     list.scrollTop = list.scrollHeight;
 
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          character: contact,
-          message: value,
-          history
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ character: contact, message: value, history })
       });
 
       const data = await response.json();
@@ -3061,57 +3049,37 @@ function openWhatsAppChat(contact) {
 
       const replies = Array.isArray(data.messages)
         ? data.messages
-        : (typeof data.reply === "string" && data.reply.trim()
-            ? [data.reply]
-            : []);
+        : (typeof data.reply === "string" && data.reply.trim() ? [data.reply] : []);
 
-      if (!replies.length) {
-        throw new Error("Balasan AI kosong.");
-      }
+      if (!replies.length) throw new Error("Balasan AI kosong.");
 
-      // Sembunyikan animasi ketika bubble balasan mulai muncul.
       typing.style.display = "none";
       window.waTypingContacts.delete(contact);
       waUpdatePresenceLabel(contact);
 
       for (let i = 0; i < replies.length; i++) {
         const text = replies[i];
-
         if (typeof text !== "string" || !text.trim()) continue;
 
-        // Jeda singkat agar pesan terasa dikirim bertahap.
-        if (i > 0) {
-          await waDelay(500 + Math.min(text.length * 12, 650));
-        }
+        if (i > 0) await waDelay(500 + Math.min(text.length * 12, 650));
 
-        const reply = {
-          text: text.trim(),
-          time: Date.now(),
-          from: contact
-        };
-
+        const reply = { text: text.trim(), time: Date.now(), from: contact };
         waChats[contact].push(reply);
         waSaveChats();
         addWhatsAppBubble(list, reply);
       }
     } catch (error) {
       console.error("Gagal mendapat balasan AI:", error);
-
       if (typeof showToast === "function") {
         showToast("Balasan AI gagal dimuat. Coba lagi.");
       }
     } finally {
       typing.style.display = "none";
-
       window.waTypingContacts.delete(contact);
       window.waActiveContacts.delete(contact);
-
       waUpdatePresenceLabel(contact);
-
       sendButton.disabled = false;
       input.disabled = false;
-      input.focus();
-
       list.scrollTop = list.scrollHeight;
     }
   });
@@ -3120,8 +3088,7 @@ function openWhatsAppChat(contact) {
   list.scrollTop = list.scrollHeight;
 }
 
-
-
+    
 function addWhatsAppBubble(container, message) {
   const bubble = document.createElement("div");
   const mine = message.from === "Raka";

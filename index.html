@@ -3432,6 +3432,8 @@ let lastY = 0;
 let trackingSwipe = false;
 
 lock.addEventListener("pointerdown", e => {
+  console.log("LOCK POINTER DOWN", e.target);
+  
   if (e.target.closest("button, input, textarea, select, a")) return;
 
   startY = e.clientY;
@@ -3442,6 +3444,8 @@ lock.addEventListener("pointerdown", e => {
 });
 
 lock.addEventListener("pointermove", e => {
+  console.log("LOCK POINTER MOVE", e.clientY);
+  
   if (!trackingSwipe) return;
 
   lastY = e.clientY;

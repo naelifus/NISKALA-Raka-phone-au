@@ -2463,7 +2463,10 @@ function setWAOnlineMembers(names) {
   }
 }
 
+
 function waPresence(contact) {
+  const activeContacts = window.waActiveContacts || new Set();
+
   if (activeContacts.has(contact)) {
     return "online";
   }

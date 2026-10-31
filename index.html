@@ -1221,6 +1221,88 @@ body { padding: 0; }
       color: #e9edef;
     }
 
+
+    
+/* ===== WHATSAPP HOME DARK MODE ===== */
+
+/* Header WhatsApp */
+#appScreen:has(#waBottomNav[style*="flex"]) .app-topbar {
+  background: #202c33 !important;
+  color: #e9edef !important;
+  border-bottom: 1px solid #2a3942 !important;
+}
+
+#appScreen:has(#waBottomNav[style*="flex"]) .app-topbar h2 {
+  color: #e9edef !important;
+}
+
+#appScreen:has(#waBottomNav[style*="flex"]) .app-topbar .back-button {
+  color: #25d366 !important;
+}
+
+/* Area konten */
+#waHomeContent {
+  background: #0b141a !important;
+  color: #e9edef !important;
+  min-height: 100%;
+}
+
+/* Search bar */
+#waHomeContent input,
+#waHomeContent input[type="search"] {
+  background: #202c33 !important;
+  color: #e9edef !important;
+  border: 0 !important;
+}
+
+#waHomeContent input::placeholder {
+  color: #8696a0 !important;
+}
+
+/* Daftar chat */
+#waHomeContent .chat-row {
+  color: #e9edef !important;
+}
+
+#waHomeContent .chat-row strong {
+  color: #e9edef !important;
+}
+
+#waHomeContent .chat-row span {
+  border-color: #26343d !important;
+}
+
+#waHomeContent .chat-row span span {
+  color: #aebac1 !important;
+}
+
+/* Judul dan teks sekunder */
+#waHomeContent h3,
+#waHomeContent h4,
+#waHomeContent p {
+  color: #aebac1 !important;
+}
+
+/* Bottom navigation */
+#waBottomNav {
+  background: #202c33 !important;
+  border-top: 1px solid #2a3942 !important;
+  color: #aebac1 !important;
+}
+
+#waBottomNav button {
+  background: transparent !important;
+  color: #aebac1 !important;
+}
+
+#waBottomNav button.active {
+  color: #25d366 !important;
+}
+
+#waBottomNav button.active .wa-nav-icon {
+  color: #25d366 !important;
+}
+
     
   </style>
 </head>

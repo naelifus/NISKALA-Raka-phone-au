@@ -1221,7 +1221,6 @@ body { padding: 0; }
       color: #e9edef;
     }
 
-
     
 
 /* ===== WHATSAPP HOME - FULL DARK MODE ===== */
@@ -1300,6 +1299,12 @@ body { padding: 0; }
 
 #waBottomNav button.active {
   color: #25d366 !important;
+}
+
+    
+/* Hide duplicate header on WhatsApp home only */
+#appScreen:has(#waBottomNav[style*="flex"]) .app-topbar {
+  display: none !important;
 }
 
     

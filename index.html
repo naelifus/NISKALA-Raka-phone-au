@@ -1302,9 +1302,10 @@ body { padding: 0; }
 }
 
     
-/* Hide duplicate header on WhatsApp home only */
+/* WhatsApp home: sembunyikan isi header, pertahankan ruangnya */
 #appScreen:has(#waBottomNav[style*="flex"]) .app-topbar {
-  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
     

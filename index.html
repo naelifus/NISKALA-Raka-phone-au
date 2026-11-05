@@ -582,7 +582,6 @@
       overscroll-behavior: contain;
       background: #0b0b0f;
       color: #f5f5f7;
-      scrollbar-color: #45454f #0b0b0f;
     }
 
     .app-card {
@@ -1311,6 +1310,21 @@ body { padding: 0; }
 #appScreen:has(#waBottomNav[style*="flex"]) .app-topbar {
   visibility: hidden !important;
   pointer-events: none !important;
+}   
+
+    
+    /* Hide scrollbar, keep scrolling functional */
+.app-content,
+#waHomeContent {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.app-content::-webkit-scrollbar,
+#waHomeContent::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
     

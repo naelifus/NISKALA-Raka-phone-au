@@ -2068,26 +2068,28 @@ function showScreen(screenId) {
 
 
 WhatsApp: `
-  <div style="font-family:Arial,sans-serif;color:#111;padding:4px 0 12px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <h2 style="font-size:25px;margin:0;letter-spacing:-0.5px;font-weight:600">WhatsApp</h2>
-      <button onclick="showToast('New chat')" style="background:none;color:#16834a;font-size:25px">＋</button>
+  <div class="wa-head">
+    <div class="wa-title-row">
+      <h2>WhatsApp</h2>
+      <div class="wa-title-actions">
+        <button onclick="showToast('New chat')">＋</button>
+      </div>
     </div>
 
     <input
+      class="wa-search"
       type="search"
       placeholder="Ask Meta AI or Search"
       oninput="filterWhatsAppContacts(this.value)"
-     style="box-sizing:border-box;width:100%;padding:10px 12px;border:0;border-radius:10px;background:#ededf0;font-size:13px;margin-bottom:12px;outline:none"
->
+    >
+  </div>
 
-
-    <div id="waHomeContent">
-      <div style="padding:12px;color:#777;font-size:13px">Your chats will appear here.</div>
+  <div id="waHomeContent">
+    <div style="padding:12px;color:#aebac1;font-size:13px">
+      Your chats will appear here.
     </div>
   </div>
 `,
-
 
       Settings: `
         <div class="app-card" style="display:flex;align-items:center;gap:12px">

@@ -1306,23 +1306,78 @@ body { padding: 0; }
 }
 
     
-/* WhatsApp home: remove unused topbar space */
+/* ===== WHATSAPP DARK MODE ===== */
+
 #appScreen:has(#waBottomNav[style*="flex"]) {
-  display: flex;
-  flex-direction: column;
+  background: #0b141a !important;
 }
 
 #appScreen:has(#waBottomNav[style*="flex"]) .app-topbar {
   display: none !important;
 }
 
-#appScreen:has(#waBottomNav[style*="flex"]) #appContent {
-  flex: 1;
-  min-height: 0;
-  max-height: none;
+#appScreen:has(#waBottomNav[style*="flex"]) .app-content {
+  padding: 0 !important;
+  background: #0b141a !important;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
+#appScreen:has(#waBottomNav[style*="flex"]) .app-content::-webkit-scrollbar,
+#waHomeContent::-webkit-scrollbar {
+  display: none;
+}
+
+.wa-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #0b141a;
+  padding: 56px 16px 12px;
+}
+
+.wa-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.wa-title-row h2 {
+  color: #e9edef;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -.4px;
+  margin: 0;
+}
+
+.wa-title-actions button {
+  background: none;
+  border: none;
+  color: #25d366;
+  font-size: 25px;
+}
+
+.wa-search {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: 24px;
+  background: #202c33;
+  color: #e9edef;
+  font-size: 14px;
+  outline: none;
+}
+
+.wa-search::placeholder {
+  color: #8696a0;
+}
+
+#waHomeContent {
+  padding: 0 16px 90px;
+  color: #e9edef;
+}
     
     /* Hide scrollbar, keep scrolling functional */
 .app-content,

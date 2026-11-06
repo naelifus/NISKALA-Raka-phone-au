@@ -1306,11 +1306,22 @@ body { padding: 0; }
 }
 
     
-/* WhatsApp home: sembunyikan isi header, pertahankan ruangnya */
+/* WhatsApp home: remove unused topbar space */
+#appScreen:has(#waBottomNav[style*="flex"]) {
+  display: flex;
+  flex-direction: column;
+}
+
 #appScreen:has(#waBottomNav[style*="flex"]) .app-topbar {
-  visibility: hidden !important;
-  pointer-events: none !important;
-}   
+  display: none !important;
+}
+
+#appScreen:has(#waBottomNav[style*="flex"]) #appContent {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+}
 
     
     /* Hide scrollbar, keep scrolling functional */

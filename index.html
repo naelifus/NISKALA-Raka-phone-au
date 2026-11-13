@@ -3032,6 +3032,11 @@ function openWhatsAppChat(contact) {
           color: #53bdeb;
           font-size: 13px;
         }
+
+        /* Hide app header while WhatsApp chat is open */
+.app-screen:has(#appContent.wa-chat-open) > .app-topbar {
+  display: none !important;
+}
          </style>
 
 

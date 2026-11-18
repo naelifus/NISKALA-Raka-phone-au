@@ -3038,7 +3038,37 @@ function openWhatsAppChat(contact) {
         /* Hide app header while WhatsApp chat is open */
 .app-screen:has(#appContent.wa-chat-open) > .app-topbar {
   display: none !important;
-}
+}     
+      /* WhatsApp bubble tails */
+      .wa-message-bubble::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 0;
+        height: 0;
+        border: 6px solid transparent;
+      }
+      
+      .wa-message-bubble.theirs::before {
+        left: -6px;
+        border-top-color: #202c33;
+        border-right: 0;
+      }
+      
+      .wa-message-bubble.mine::before {
+        right: -6px;
+        border-top-color: #005c4b;
+        border-left: 0;
+      }
+      
+      /* Bubble spacing and details */
+      .wa-message-bubble {
+        margin-top: 2px;
+      }
+      
+      .wa-message-meta {
+        opacity: .9;
+      }
          </style>
 
 

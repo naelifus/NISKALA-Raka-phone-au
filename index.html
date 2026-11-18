@@ -3069,6 +3069,19 @@ function openWhatsAppChat(contact) {
       .wa-message-meta {
         opacity: .9;
       }
+    
+          /* WhatsApp chat status bar */
+    .phone:has(#appContent.wa-chat-open) .sb {
+      color: #e9edef !important;
+    }
+    
+    .phone:has(#appContent.wa-chat-open) .bat {
+      background: #e9edef !important;
+    }
+    
+    .phone:has(#appContent.wa-chat-open) .bat b {
+      color: #111 !important;
+    }
          </style>
 
 
